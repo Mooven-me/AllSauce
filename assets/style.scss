@@ -1,0 +1,13 @@
+@import "bootstrap/scss/functions";
+
+$primary: #f0cbff;
+
+@import "bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+
+.dot-grid {
+  background-image: radial-gradient(#d6d6d6 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: -19px -19px; 
+}
