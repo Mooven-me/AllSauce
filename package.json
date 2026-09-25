@@ -11,6 +11,9 @@
         "vite-plugin-symfony": "^8.2"
     },
     "dependencies": {
+        "@rjsf/core": "^6.10.1",
+        "@rjsf/utils": "^6.10.1",
+        "@rjsf/validator-ajv8": "^6.10.1",
         "@vitejs/plugin-react": "^6.1.1",
         "bootstrap": "^5.3.8",
         "bootstrap-icons": "^1.13.1",

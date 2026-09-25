@@ -37,3 +37,9 @@ services:
     command: npm run dev
     ports:
       - "5173:5173"
+
+###> doctrine/doctrine-bundle ###
+  database:
+    ports:
+      - "3306"
+###< doctrine/doctrine-bundle ###
