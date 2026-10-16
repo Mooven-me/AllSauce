@@ -1,27 +1,32 @@
 import { Button, Card, CardBody, CardFooter, Col, Row } from "reactstrap";
 import { useDynamicForm } from "../Utils/Form/useDynamicForm";
 import React from "react";
+import Sauce from "./Sauce";
+import { sendData } from "../Utils/sendData";
 
 export default function Sauces(){
 
     const { FormModal, openForm } = useDynamicForm('sauce', (newSauce) => {
-        console.log("Automatically saved!", newSauce);
-        // Refresh your list here
+        setSauces([...sauces, newSauce])
     });
 
     const [sauces, setSauces] = React.useState([]);
 
     React.useEffect(() => {
-        setSauces(() => fetch('/api/sauces').then(data => data.json()))
+        sendData({route: '/sauces', method: 'GET'}).then(data => setSauces(data))
     }, [])
-    
+
     return (
         <div className="dot-grid h-100 p-4">
             <Row>
-                {sauces.length}
-                <Col xs="4">
+                {sauces.map((sauce, id) => {
+                    return <Col key={id} xs="4" style={{height:"300px"}}>
+                        <Sauce sauce={sauce} />
+                    </Col>
+                })}
+                <Col xs="4" style={{height:"300px"}}>
                     <FormModal />
-                    <Card className="d-flex align-items-center justify-content-center">
+                    <Card className="h-100 text-center">
                         <CardBody>
                             <Button onClick={openForm}>+</Button>
                         </CardBody>

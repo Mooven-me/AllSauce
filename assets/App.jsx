@@ -3,6 +3,7 @@ import { Button, Card, CardBody, CardHeader, Col, Row } from "reactstrap";
 import Sauces from "./components/Index/Sauces";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Topbar from "./components/Topbar/Topbar";
+import Lobby from "./components/Sauce/Scenes/Lobby";
 
 export default function App() {
     return (
@@ -13,6 +14,7 @@ export default function App() {
                 <div className="flex-grow-1">
                     <Routes>
                     <Route path="/" element={<Sauces/>} />
+                    <Route path="/:slug" element={<Lobby/>} />
                 </Routes>
                 </div>
             </Col>

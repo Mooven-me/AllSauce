@@ -38,6 +38,17 @@ services:
     ports:
       - "5173:5173"
 
+  phpmyadmin: 
+    image: phpmyadmin
+    environment:
+      PMA_HOST: database
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    ports:
+      - "8080:80"
+    depends_on:
+      - database
+
+
 ###> doctrine/doctrine-bundle ###
   database:
     ports:

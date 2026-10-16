@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Api;
+namespace App\Controller\V1;
 
 use App\Service\AutoSchemaBuilder;
 use App\Service\FormableRegistry;

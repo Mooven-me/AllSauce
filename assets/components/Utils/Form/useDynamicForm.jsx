@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import DynamicSchemaModal from './DynamicSchemaModal';
+import { sendData } from '../sendData';
 
 export function useDynamicForm(path, onSuccess = null) {
     const [schema, setSchema] = useState(null);
@@ -9,8 +10,7 @@ export function useDynamicForm(path, onSuccess = null) {
     const openForm = useCallback(() => {
         setIsOpen(true);
         if (!schema) {
-            fetch(`/api/form/${path}`)
-                .then(res => res.json())
+            sendData({route: `/form/${path}`})
                 .then(data => setSchema(data))
                 .catch(err => console.error("Failed to load schema", err));
         }

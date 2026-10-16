@@ -1,6 +1,5 @@
 @import "bootstrap/scss/functions";
-
-$primary: #f0cbff;
+$primary: #f0cbff !default;
 
 @import "bootstrap/scss/variables";
 @import "../node_modules/bootstrap/scss/bootstrap";
