@@ -14,11 +14,10 @@
     ],
     "service": "php",
     "workspaceFolder": "/app",
+    "remoteUser": "nonroot",
     "features": {
         "ghcr.io/devcontainers/features/node:1": {}
     },
-    "remoteUser": "nonroot",
-    "postCreateCommand": "npm install -g intelephense; curl -fsSL https://kilo.ai/cli/install | bash",
     "customizations": {
         "vscode": {
             "extensions": [

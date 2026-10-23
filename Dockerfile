@@ -165,3 +165,23 @@ ENTRYPOINT ["docker-entrypoint"]
 
 HEALTHCHECK --start-period=60s CMD php -r 'exit(false === @file_get_contents("http://localhost:2019/metrics", context: stream_context_create(["http" => ["timeout" => 5]])) ? 1 : 0);'
 CMD [ "frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile" ]
+
+# Dev Container image (adds editor/CLI tooling on top of dev)
+FROM frankenphp_dev AS frankenphp_devcontainer
+
+RUN <<-EOF
+	apt-get update
+	apt-get install -y --no-install-recommends ca-certificates curl nodejs npm
+	npm install -g intelephense
+	rm -rf /var/lib/apt/lists/*
+EOF
+
+# Kilo installs into ~/.kilo, so run it as the user that owns that home
+USER nonroot
+RUN curl -fsSL https://kilo.ai/cli/install | bash
+
+# Go back to root so the entrypoint behaves exactly like the dev image
+USER root
+
+# Builder for the prod FrankenPHP image
+FROM frankenphp_base AS frankenphp_prod_builder
