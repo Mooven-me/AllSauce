@@ -1,4 +1,11 @@
 {
+    "remoteEnv": {
+        "PATH": "${containerEnv:PATH}:/home/nonroot/.kilo/bin",
+        "XDG_DATA_HOME": "/home/nonroot/.local/share",
+        "XDG_CONFIG_HOME": "/home/nonroot/.config",
+        "XDG_CACHE_HOME": "/home/nonroot/.cache",
+        "XDG_STATE_HOME": "/home/nonroot/.local/state"
+    },
     "name": "Symfony Docker",
     "dockerComposeFile": [
         "../compose.yaml",
@@ -11,12 +18,13 @@
         "ghcr.io/devcontainers/features/node:1": {}
     },
     "remoteUser": "nonroot",
-    "postCreateCommand": "npm install -g intelephense",
+    "postCreateCommand": "npm install -g intelephense; curl -fsSL https://kilo.ai/cli/install | bash",
     "customizations": {
         "vscode": {
             "extensions": [
                 "bmewburn.vscode-intelephense-client",
-                "xdebug.php-debug"
+                "xdebug.php-debug",
+                "kilocode.kilo-code"
             ],
             "settings": {
                 "launch": {
