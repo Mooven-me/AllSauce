@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker version *)",
+      "Bash(code --version)",
+      "Bash(codium --version)",
+      "Bash(docker compose *)",
+      "Bash(devcontainer --help)",
+      "Bash(code --extensions-dir)",
+      "Bash(code --list-extensions)",
+      "Bash(xxd /home/mooven/Documents/projects/AllSauce/compose.yaml)",
+      "Bash(netstat -tlnp)",
+      "Bash(grep -v '^$')",
+      "Bash(code --folder-uri file:///home/mooven/Documents/projects/AllSauce)",
+      "Bash(docker exec *)",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s --connect-timeout 3 http://localhost:2019/metrics)",
+      "Bash(docker rm *)",
+      "Bash(docker create *)",
+      "Bash(docker start *)",
+      "Bash(docker stats *)",
+      "Bash(dmesg)",
+      "Bash(docker run *)",
+      "Bash(pkill -f \"frankenphp\")"
+    ]
+  }
+}
