@@ -10,7 +10,7 @@ export function useDynamicForm(path, onSuccess = null) {
     const openForm = useCallback(() => {
         setIsOpen(true);
         if (!schema) {
-            sendData({route: `/form/${path}`})
+            sendData({route: `/form/${path}`, method: `GET`})
                 .then(data => setSchema(data))
                 .catch(err => console.error("Failed to load schema", err));
         }

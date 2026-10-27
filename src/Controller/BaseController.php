@@ -11,8 +11,6 @@ final class BaseController extends AbstractController
     #[Route('/{reactRouting}', name: 'app_base', requirements: ['reactRouting' => '^(?!api/).*'], defaults: ['reactRouting' => null], priority: -1)]
     public function index(): Response
     {
-        return $this->render('base/index.html.twig', [
-            'controller_name' => 'BaseController',
-        ]);
+        return $this->render('base/index.html.twig');
     }
 }
