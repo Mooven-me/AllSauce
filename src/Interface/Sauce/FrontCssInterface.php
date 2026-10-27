@@ -2,6 +2,8 @@
 
 namespace App\Interface\Sauce;
 
+use App\Enum\SauceCssEnum;
+
 interface FrontCssInterface {
-    public function getStylePath() : string;
+    public function getCssEnum() : SauceCssEnum;
 }

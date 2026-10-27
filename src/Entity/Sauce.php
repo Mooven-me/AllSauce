@@ -4,10 +4,9 @@ namespace App\Entity;
 
 use App\Attribute\Formable;
 use App\Attribute\NotFormable;
+use App\Enum\SauceCssEnum;
 use App\Enum\SauceServiceEnum;
 use App\Repository\SauceRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SauceRepository::class)]
@@ -29,16 +28,8 @@ class Sauce
     #[ORM\Column(enumType: SauceServiceEnum::class)]
     private ?SauceServiceEnum $service = null;
 
-    /**
-     * @var Collection<int, SauceCss>
-     */
-    #[ORM\OneToMany(targetEntity: SauceCss::class, mappedBy: 'Sauce', orphanRemoval: true)]
-    private Collection $cssProperties;
-
-    public function __construct()
-    {
-        $this->cssProperties = new ArrayCollection();
-    }
+    #[ORM\Column(enumType: SauceCssEnum::class)]
+    private ?SauceCssEnum $sauceCssEnum = null;
 
     public function getId(): ?int
     {
@@ -81,32 +72,14 @@ class Sauce
         return $this;
     }
 
-    /**
-     * @return Collection<int, SauceCss>
-     */
-    public function getCssProperties(): Collection
+    public function getSauceCssEnum(): ?SauceCssEnum
     {
-        return $this->cssProperties;
+        return $this->sauceCssEnum;
     }
 
-    public function addCssProperty(SauceCss $cssProperty): static
+    public function setSauceCssEnum(SauceCssEnum $sauceCssEnum): static
     {
-        if (!$this->cssProperties->contains($cssProperty)) {
-            $this->cssProperties->add($cssProperty);
-            $cssProperty->setSauce($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCssProperty(SauceCss $cssProperty): static
-    {
-        if ($this->cssProperties->removeElement($cssProperty)) {
-            // set the owning side to null (unless already changed)
-            if ($cssProperty->getSauce() === $this) {
-                $cssProperty->setSauce(null);
-            }
-        }
+        $this->sauceCssEnum = $sauceCssEnum;
 
         return $this;
     }

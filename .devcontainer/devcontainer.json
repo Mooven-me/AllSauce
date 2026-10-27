@@ -18,12 +18,26 @@
     "features": {
         "ghcr.io/devcontainers/features/node:1": {}
     },
+    "overrideCommand": false,
     "customizations": {
+        "jetbrains": {
+            "plugins": [
+                "fr.adrienbrault.idea.symfony2plugin",
+                "com.jetbrains.twig",
+                "com.jetbrains.php",
+                "de.espend.idea.php.annotation",
+            ],
+            "settings": {
+                "com.intellij:app:BuiltInServerOptions.builtInServerPort": 62697,
+                "com.intellij:app:HttpConfigurable.use_proxy_pac": true
+            }
+        },
         "vscode": {
             "extensions": [
                 "bmewburn.vscode-intelephense-client",
                 "xdebug.php-debug",
-                "kilocode.kilo-code"
+                "kilocode.kilo-code",
+                "thenouillet.symfony-vscode"
             ],
             "settings": {
                 "launch": {
