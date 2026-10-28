@@ -13,6 +13,12 @@
         "compose.devcontainer.yaml"
     ],
     "service": "php",
+    "runServices": [
+        "php",
+        "database",
+        "vite",
+        "phpmyadmin"
+    ],
     "workspaceFolder": "/app",
     "remoteUser": "nonroot",
     "features": {
