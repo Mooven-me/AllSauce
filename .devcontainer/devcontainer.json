@@ -21,9 +21,6 @@
     ],
     "workspaceFolder": "/app",
     "remoteUser": "nonroot",
-    "features": {
-        "ghcr.io/devcontainers/features/node:1": {}
-    },
     "overrideCommand": false,
     "customizations": {
         "jetbrains": {
@@ -41,6 +38,7 @@
         },
         "vscode": {
             "extensions": [
+                "symfony.language-tools",
                 "bmewburn.vscode-intelephense-client",
                 "xdebug.php-debug",
                 "kilocode.kilo-code",
