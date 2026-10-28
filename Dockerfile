@@ -184,7 +184,6 @@ EOF
 # Kilo installs into ~/.kilo, so run it as the user that owns that home
 USER nonroot
 RUN curl -fsSL https://kilo.ai/cli/install | bash
-RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
 
 # Go back to root so the entrypoint behaves exactly like the dev image
 USER root
