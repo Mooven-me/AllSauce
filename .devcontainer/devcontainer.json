@@ -21,11 +21,12 @@
     "overrideCommand": false,
     "customizations": {
         "jetbrains": {
+            "backend": "PhpStorm",
             "plugins": [
-                "fr.adrienbrault.idea.symfony2plugin",
                 "com.jetbrains.twig",
                 "com.jetbrains.php",
                 "de.espend.idea.php.annotation",
+                "fr.adrienbrault.idea.symfony2plugin"
             ],
             "settings": {
                 "com.intellij:app:BuiltInServerOptions.builtInServerPort": 62697,
