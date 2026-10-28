@@ -21,11 +21,7 @@ export function useDynamicForm(path, onSuccess = null) {
     const handleSubmit = async (formData) => {
         setIsSubmitting(true);
         try {
-            const response = await fetch(`/api/form/${path}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
+            const response = sendData({route: `/form/${path}`});
 
             if (response.ok) {
                 closeForm();
