@@ -21,7 +21,7 @@ export function useDynamicForm(path, onSuccess = null) {
     const handleSubmit = async (formData) => {
         setIsSubmitting(true);
         try {
-            const response = sendData({route: `/form/${path}`});
+            const response = sendData({route: `/form/${path}`, data: formData});
 
             if (response.ok) {
                 closeForm();
