@@ -41,10 +41,10 @@
                 "symfony.language-tools",
                 "bmewburn.vscode-intelephense-client",
                 "xdebug.php-debug",
-                "kilocode.kilo-code",
-                "thenouillet.symfony-vscode"
+                "kilocode.kilo-code"
             ],
             "settings": {
+                "symfonyLsp.phpCommand": ["php"],
                 "launch": {
                     "version": "0.2.0",
                     "configurations": [
