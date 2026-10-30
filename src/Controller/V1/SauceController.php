@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/{slug}')]
 final class SauceController extends AbstractController
 {
-    #[Route(name: 'api_get_sauce_css', methods: ['GET'])]
+    #[Route('/css', name: 'api_get_sauce_css', methods: ['GET'])]
     public function getSauceCss(SauceRepository $sauceRepository, string $slug): Response {
         return $this->json($sauceRepository->findAll());
     }
