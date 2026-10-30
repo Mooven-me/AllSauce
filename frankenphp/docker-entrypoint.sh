@@ -2,9 +2,9 @@
 set -e
 
 if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
-
-	mkdir -p var
-	chmod 777 var
+	umask 0000
+	mkdir -p var/cache var/log
+	chmod -R 777 var
 
 	if [ -z "$(ls -A 'vendor/' 2>/dev/null)" ]; then
 		composer install --prefer-dist --no-progress --no-interaction
