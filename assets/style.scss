@@ -10,3 +10,21 @@ $primary: #f0cbff !default;
   background-size: 24px 24px;
   background-position: -19px -19px; 
 }
+
+@keyframes scroll-diag {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 1536px 906px;
+  }
+}
+
+
+:root {
+  --bs-box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+}
+
+.shadow {
+  box-shadow: var(--bs-box-shadow) !important;
+}

@@ -7,17 +7,20 @@ import Lobby from "./components/Sauce/Scenes/Lobby";
 
 export default function App() {
     return (
-        <Row className="vh-100 g-0">
-            <Sidebar />
-            <Col className="d-flex flex-column h-100">
-                <Topbar />
-                <div className="flex-grow-1">
-                    <Routes>
-                    <Route path="/" element={<Sauces/>} />
-                    <Route path="/:slug" element={<Lobby/>} />
-                </Routes>
-                </div>
-            </Col>
-        </Row>
+        <>
+            <div className="animated-background"></div>
+            <Row className="vh-100 g-0" style={{transition: "0.75s"}}>
+                <Sidebar />
+                <Col className="d-flex flex-column h-100">
+                    <Topbar />
+                    <div className="flex-grow-1">
+                        <Routes>
+                        <Route path="/" element={<Sauces/>} />
+                        <Route path="/:slug" element={<Lobby/>} />
+                    </Routes>
+                    </div>
+                </Col>
+            </Row>
+        </>
     )
 }

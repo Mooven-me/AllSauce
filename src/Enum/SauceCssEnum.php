@@ -2,8 +2,10 @@
 
 namespace App\Enum;
 
+use App\Sauce\Css\BlankCss;
 use App\Sauce\Css\LoLSauceCss;
 
 enum SauceCssEnum : string {
     case LoLSauceCss = LoLSauceCss::class;
+    case BlankCss = BlankCss::class;
 }
