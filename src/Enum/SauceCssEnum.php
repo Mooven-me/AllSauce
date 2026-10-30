@@ -2,8 +2,8 @@
 
 namespace App\Enum;
 
-use App\Service\Sauce\LoLSauceService;
+use App\Sauce\Css\LoLSauceCss;
 
 enum SauceCssEnum : string {
-    case LoLSauceCss = LoLSauceService::class;
+    case LoLSauceCss = LoLSauceCss::class;
 }

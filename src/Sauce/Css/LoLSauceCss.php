@@ -2,6 +2,10 @@
 
 namespace App\Sauce\Css;
 
-class LoLSauceCss {
-    
+class LoLSauceCss implements CssInterface {
+    public function getCss() : array {
+        return [
+            "background-color" => "blue"
+        ];
+    }
 }

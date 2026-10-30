@@ -2,6 +2,10 @@
 
 namespace App\Interface\Sauce;
 
-interface SauceServiceInterface extends FrontCssInterface {
+use App\Sauce\Css\CssInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag]
+interface SauceServiceInterface extends FrontCssInterface {
+    public function getCssClass() : CssInterface;
 }

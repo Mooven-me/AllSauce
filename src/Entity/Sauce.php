@@ -6,8 +6,10 @@ use App\Attribute\Formable;
 use App\Attribute\NotFormable;
 use App\Enum\SauceCssEnum;
 use App\Enum\SauceServiceEnum;
+use App\Interface\Sauce\SauceServiceInterface;
 use App\Repository\SauceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Psr\Container\ContainerInterface;
 
 #[ORM\Entity(repositoryClass: SauceRepository::class)]
 #[Formable(path: 'sauce')]
@@ -27,9 +29,6 @@ class Sauce
 
     #[ORM\Column(enumType: SauceServiceEnum::class)]
     private ?SauceServiceEnum $service = null;
-
-    #[ORM\Column(enumType: SauceCssEnum::class)]
-    private ?SauceCssEnum $sauceCssEnum = null;
 
     public function getId(): ?int
     {
@@ -72,15 +71,12 @@ class Sauce
         return $this;
     }
 
-    public function getSauceCssEnum(): ?SauceCssEnum
+    public function getSauceService(ContainerInterface $sauceServiceLocator): ?SauceServiceInterface
     {
-        return $this->sauceCssEnum;
-    }
+        if (null === $this->service) {
+            return null;
+        }
 
-    public function setSauceCssEnum(SauceCssEnum $sauceCssEnum): static
-    {
-        $this->sauceCssEnum = $sauceCssEnum;
-
-        return $this;
+        return $sauceServiceLocator->get($this->service->value);
     }
 }
