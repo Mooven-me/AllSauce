@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/{slug}')]
+#[Route('/sauce/{slug}')]
 final class SauceController extends AbstractController
 {
     #[Route('/css', name: 'api_get_sauce_css', methods: ['GET'])]
@@ -29,5 +29,13 @@ final class SauceController extends AbstractController
         $sauceService = $sauce->getSauceService($sauceServiceLocator);
 
         return $this->json($sauceService?->getCssClass()->getCss() ?? []);
+    }
+
+    #[Route(name: 'api_get_sauce', methods: ['GET'])]
+    public function getSauce(
+        string $slug,
+        SauceRepository $sauceRepository,
+    ){
+        return $this->json($sauceRepository->findOneBySlug($slug));
     }
 }

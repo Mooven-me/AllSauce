@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/sauces')]
+#[Route('/sauces', priority: 1)]
 final class SaucesController extends AbstractController
 {
     #[Route(name: 'api_get_sauces', methods: ['GET'])]

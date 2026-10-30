@@ -3,6 +3,7 @@ import { useParams } from "react-router"
 import { sendData } from "../../Utils/sendData";
 import { Card, CardBody, Col, Container, Input, InputGroup, Row, Spinner, Button } from "reactstrap";
 import LoadingButton from "../../Utils/LoadingButton";
+import { useSauce } from "../../Utils/SauceProvider";
 
 export default function Lobby() {
 
@@ -12,7 +13,8 @@ export default function Lobby() {
     const [roomCreationLoading, setRoomCreationLoading] = React.useState(false);
     const [usernameError, setUsernameError] = React.useState(false);
     const [joinRoomError, setJoinRoomError] = React.useState(false);
-    const roomId = React.useRef("")
+    const roomId = React.useRef("");
+    const { currentSauce, loadSauce } = useSauce();
 
     const createRoom = async () => {
         console.log("room créé")
@@ -47,17 +49,26 @@ export default function Lobby() {
     }, [cssMap, params.slug]);
 
     /**
+     * When the slug change
      * once the css is fetch, apply it
      */
     React.useEffect(() => {
         setIsLoading(true);
-        sendData({route: '/' + params.slug + '/css', method: 'GET'})
-            .then(data => {
-                if (data && !data.error) {
-                    setCssMap(data);
-                }
-            })
-            .finally(() => setIsLoading(false));
+        // to wait execube both requests at the same time and wait that both succeed
+        const fetchData = async () => {
+            try {
+                // both functions use "sendData" wich automatically send errors 
+                const [cssData, sauceData] = await Promise.all([
+                    sendData({ route: '/sauce/' + params.slug + '/css', method: 'GET' }).then(data => setCssMap(data)),
+                    loadSauce(params.slug)
+                ]);
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Erreur lors du chargement :", error);
+            }
+        };
+
+        fetchData();
     }, [params.slug]);
 
     /**
@@ -79,20 +90,20 @@ export default function Lobby() {
         {!isLoading &&
             <Container className={"flex-grow-1"}>
                 <div className="lobby-title align-items-center justify-content-center d-flex" style={{fontSize: "10vw", marginTop:"50px"}}>
-                    LoLSauce
+                    {currentSauce.name}
                 </div>
                 <div className='vstack gap-5'>
                     <Row className="gy-3 justify-content-center">
                         <Col sm={6} md={5} lg={4}>
-                            <Card color={'dark'} className={"p-0 bg-opacity-50"}>
+                            <Card color={"secondary"} className={"lobby-button p-0"}>
                                 <CardBody>
                                     <InputGroup>
-                                        <Button outline color={"info"} style={{width:"101px"}} className='shadow' onClick={handleNavigateToRoom}>
+                                        <Button color={"primary"} style={{width:"101px"}} className='shadow' onClick={handleNavigateToRoom}>
                                             <b>Rejoindre</b>
                                         </Button>
                                         <Input
                                             color={"secondary"}
-                                            className='shadow bg-opacity-25'
+                                            className='shadow'
                                             onChange={(e) => {roomId.current = e.target.value}}
                                             type={"number"}
                                             onKeyUpCapture={(e) => e.key === 'Enter' && handleNavigateToRoom()}
@@ -105,14 +116,14 @@ export default function Lobby() {
                             </Card>
                         </Col>
                         <Col sm={6} md={5} lg={4}>
-                            <Card color={'dark'} className={"p-0 bg-opacity-50"}>
+                            <Card color={'secondary'} className={"lobby-button p-0"}>
                                 <CardBody>
                                     <InputGroup>
-                                        <LoadingButton color={"info"} style={{width:"101px"}} outline onClick={createRoom} forceLoading={roomCreationLoading}>
+                                        <LoadingButton color={"primary"} style={{width:"101px"}} className='shadow' onClick={createRoom} forceLoading={roomCreationLoading}>
                                             <b>Créer</b>
                                         </LoadingButton>
                                         <Input
-                                            className='bg-opacity-25 bg-secondary'
+                                            className='shadow'
                                             placeholder='Pseudo'
                                             onKeyUpCapture={(e) => e.key === 'Enter' && createRoom()}
                                             onChange={(e) => handleUsernameChange(e)}
