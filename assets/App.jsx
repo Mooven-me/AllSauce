@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router";
-import { Button, Card, CardBody, CardHeader, Col, Row } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import Sauces from "./components/Index/Sauces";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Topbar from "./components/Topbar/Topbar";
-import Lobby from "./components/Sauce/Scenes/Lobby";
+import SauceDispatcher from "./components/Sauce/SauceDispatcher";
 
 export default function App() {
     return (
@@ -15,9 +15,9 @@ export default function App() {
                     <Topbar />
                     <div className="flex-grow-1">
                         <Routes>
-                        <Route path="/" element={<Sauces/>} />
-                        <Route path="/:slug" element={<Lobby/>} />
-                    </Routes>
+                            <Route path="/" element={<Sauces/>} />
+                            <Route path="/:slug/*" element={<SauceDispatcher />} />
+                        </Routes>
                     </div>
                 </Col>
             </Row>
