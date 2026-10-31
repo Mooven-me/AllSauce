@@ -3,11 +3,14 @@ import "./style.scss";
 import App from "./App";
 import { createRoot } from "react-dom/client";
 import { SauceProvider } from "./components/Utils/SauceProvider";
+import { AuthProvider } from "./components/Utils/AuthProvider";
 
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
-        <SauceProvider>
-            <App />
-        </SauceProvider>
+        <AuthProvider>
+            <SauceProvider>
+                <App />
+            </SauceProvider>
+        </AuthProvider>
     </BrowserRouter>
 )
