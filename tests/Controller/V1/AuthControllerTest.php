@@ -116,4 +116,100 @@ final class AuthControllerTest extends WebTestCase
         self::assertSame($registeredData['id'], $meData['id']);
         self::assertFalse($meData['anonymous']);
     }
+
+    public function testMeRequiresAuthentication(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/api/v1/auth/me');
+
+        self::assertResponseStatusCodeSame(401);
+    }
+
+    public function testAnonymousEndpointReturnsExistingUserWhenAlreadyAuthenticated(): void
+    {
+        $client = static::createClient();
+
+        $client->request('POST', '/api/v1/auth/anonymous');
+        self::assertResponseStatusCodeSame(201);
+        $firstData = json_decode((string) $client->getResponse()->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+
+        $client->request('POST', '/api/v1/auth/anonymous');
+        self::assertResponseStatusCodeSame(200);
+        $secondData = json_decode((string) $client->getResponse()->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+
+        self::assertSame($firstData['id'], $secondData['id']);
+        self::assertSame($firstData['uuid'], $secondData['uuid']);
+    }
+
+    public function testAnonymousEndpointResolvesUserFromRefreshTokenWhenBearerExpired(): void
+    {
+        $client = static::createClient();
+
+        $client->request('POST', '/api/v1/auth/anonymous');
+        self::assertResponseStatusCodeSame(201);
+        $firstData = json_decode((string) $client->getResponse()->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+
+        // Simulate expired/missing BEARER cookie while keeping refresh_token cookie
+        $client->getCookieJar()->expire('BEARER');
+
+        $client->request('POST', '/api/v1/auth/anonymous');
+        self::assertResponseStatusCodeSame(200);
+        $resolvedData = json_decode((string) $client->getResponse()->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+
+        self::assertSame($firstData['id'], $resolvedData['id']);
+        self::assertNotNull($client->getCookieJar()->get('BEARER'));
+    }
+
+    public function testRegisterConflictWithDuplicateEmail(): void
+    {
+        $client = static::createClient();
+        $email = sprintf('dup_%s@example.com', bin2hex(random_bytes(4)));
+
+        $client->jsonRequest('POST', '/api/v1/auth/register', [
+            'email' => $email,
+            'password' => 'Secret123!',
+        ]);
+        self::assertResponseStatusCodeSame(201);
+
+        // Try registering again with the same email (even with different case/whitespace)
+        $client->jsonRequest('POST', '/api/v1/auth/register', [
+            'email' => '  '.strtoupper($email).'  ',
+            'password' => 'AnotherPass123!',
+        ]);
+        self::assertResponseStatusCodeSame(409);
+
+        $errorData = json_decode((string) $client->getResponse()->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+        self::assertArrayHasKey('error_message', $errorData);
+    }
+
+    public function testRegisterAndLoginValidationErrors(): void
+    {
+        $client = static::createClient();
+
+        $client->jsonRequest('POST', '/api/v1/auth/register', [
+            'email' => 'not-an-email',
+            'password' => '123',
+        ]);
+        self::assertResponseStatusCodeSame(422);
+
+        $client->jsonRequest('POST', '/api/v1/auth/login', [
+            'email' => '',
+            'password' => 'short',
+        ]);
+        self::assertResponseStatusCodeSame(422);
+    }
+
+    public function testLoginWithInvalidCredentialsReturnsUnauthorized(): void
+    {
+        $client = static::createClient();
+
+        $client->jsonRequest('POST', '/api/v1/auth/login', [
+            'email' => 'nonexistent@example.com',
+            'password' => 'WrongPassword123',
+        ]);
+        self::assertResponseStatusCodeSame(401);
+
+        $errorData = json_decode((string) $client->getResponse()->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+        self::assertSame('Identifiants invalides.', $errorData['error_message']);
+    }
 }
