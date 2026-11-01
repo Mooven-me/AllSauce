@@ -41,13 +41,14 @@ services:
     ports:
       - "5173:5173"
 
-  phpmyadmin: 
-    image: phpmyadmin
+  whodb:
+    image: clidey/whodb
+    restart: unless-stopped
     environment:
-      PMA_HOST: database
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+      WHODB_POSTGRES_1: '{"alias":"Dev DB (app)","host":"database","user":"${POSTGRES_USER:-app}","password":"${POSTGRES_PASSWORD:-!ChangeMe!}","database":"${POSTGRES_DB:-app}","port":"5432"}'
+      WHODB_POSTGRES_2: '{"alias":"Test DB (app_test)","host":"database","user":"${POSTGRES_USER:-app}","password":"${POSTGRES_PASSWORD:-!ChangeMe!}","database":"${POSTGRES_DB:-app}_test","port":"5432"}'
     ports:
-      - "8080:80"
+      - "8080:8080"
     depends_on:
       - database
 
@@ -55,7 +56,7 @@ services:
 ###> doctrine/doctrine-bundle ###
   database:
     ports:
-      - "3306"
+      - "5432"
 ###< doctrine/doctrine-bundle ###
 
 volumes:
