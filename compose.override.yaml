@@ -45,6 +45,7 @@ services:
     image: clidey/whodb
     restart: unless-stopped
     environment:
+      # default configuration to preset the app database and app-test database in whodb
       WHODB_POSTGRES_1: '{"alias":"Dev DB (app)","host":"database","user":"${POSTGRES_USER:-app}","password":"${POSTGRES_PASSWORD:-!ChangeMe!}","database":"${POSTGRES_DB:-app}","port":"5432"}'
       WHODB_POSTGRES_2: '{"alias":"Test DB (app_test)","host":"database","user":"${POSTGRES_USER:-app}","password":"${POSTGRES_PASSWORD:-!ChangeMe!}","database":"${POSTGRES_DB:-app}_test","port":"5432"}'
     ports:
