@@ -42,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?SauceRoom $sauceRoom = null;
+
     public function __construct()
     {
         $this->uuid = Uuid::v7();
@@ -134,5 +137,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function getSauceRoom(): ?SauceRoom
+    {
+        return $this->sauceRoom;
+    }
+
+    public function setSauceRoom(?SauceRoom $sauceRoom): static
+    {
+        $this->sauceRoom = $sauceRoom;
+
+        return $this;
     }
 }

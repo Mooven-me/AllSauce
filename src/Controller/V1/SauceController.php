@@ -2,18 +2,25 @@
 
 namespace App\Controller\V1;
 
+use App\Entity\User;
 use App\Interface\Sauce\SauceServiceInterface;
 use App\Repository\SauceRepository;
+use App\Service\Room\RoomUtilManager;
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/sauce/{slug}')]
 final class SauceController extends AbstractController
 {
-    #[Route('/css', name: 'api_get_sauce_css', methods: ['GET'])]
+    public function __construct(
+        private RoomUtilManager $rum
+    ){} 
+
+    #[Route('/css', name: 'api_sauce_get_sauce_css', methods: ['GET'])]
     public function getSauceCss(
         SauceRepository $sauceRepository,
         #[AutowireLocator(SauceServiceInterface::class)]
@@ -22,7 +29,7 @@ final class SauceController extends AbstractController
     ): Response {
         /** @var \App\Entity\Sauce|null $sauce */
         $sauce = $sauceRepository->findOneBySlug($slug);
-        if (null === $sauce) {
+        if ($sauce === null) {
             throw $this->createNotFoundException();
         }
 
@@ -31,11 +38,30 @@ final class SauceController extends AbstractController
         return $this->json($sauceService?->getCssClass()->getCss() ?? []);
     }
 
-    #[Route(name: 'api_get_sauce', methods: ['GET'])]
+    #[Route('/', name: 'api_sauce_get_sauce', methods: ['GET'])]
     public function getSauce(
         string $slug,
         SauceRepository $sauceRepository,
     ){
         return $this->json($sauceRepository->findOneBySlug($slug));
+    }
+
+    #[Route('/create_room', name: 'api_sauce_create_sauce_room', methods: ['POST'])]
+    public function createSauceRoom(
+        string $slug,
+        SauceRepository $sauceRepository,
+        #[CurrentUser] ?User $user,
+    ){
+        /** @var \App\Entity\Sauce|null $sauce */
+        $sauce = $sauceRepository->findOneBySlug($slug);
+        if ($sauce === null || $user === null) {
+            throw $this->createNotFoundException();
+        }
+
+        $room = $this->rum->createRoom($user);
+
+        return $this->json([
+            'room_id' =>  $room->getRoomCode()
+        ]);
     }
 }
