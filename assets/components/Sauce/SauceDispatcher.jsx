@@ -3,8 +3,9 @@ import Lobby from "./Scenes/Lobby";
 import React from "react";
 import { Spinner } from "reactstrap";
 import { sendData } from "../Utils/sendData";
-import Room from "./Scenes/Room";
 import { useSauce } from "../Provider/SauceProvider";
+import RoomDispatcher from "./Scenes/RoomDispatcher";
+import { MercureProvider } from "../Provider/MercureProvider";
 
 export default function SauceDispatcher() {
 
@@ -73,7 +74,7 @@ export default function SauceDispatcher() {
             {!isLoading &&
                 <Routes>
                     <Route path='' element={<Lobby />} />
-                    <Route path='/:roomCode' element={<Room />} />
+                    <Route path='/:roomCode' element={<RoomDispatcher />} />
                 </Routes>
             }
         </>

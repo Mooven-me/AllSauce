@@ -9,11 +9,6 @@ export default function Room(){
     const isGameStarted = false;
     const isLeader = true;
 
-    React.useEffect(() => {
-        return () => {
-        };
-    }, []);
-
     const handleStartGame = async () => {
         await sendData({ route: '/sauce/' + currentSauce.slug + '/start', method: "POST" })
     }
