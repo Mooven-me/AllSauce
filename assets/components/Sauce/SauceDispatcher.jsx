@@ -5,7 +5,6 @@ import { Spinner } from "reactstrap";
 import { sendData } from "../Utils/sendData";
 import { useSauce } from "../Provider/SauceProvider";
 import RoomDispatcher from "./Scenes/RoomDispatcher";
-import { MercureProvider } from "../Provider/MercureProvider";
 
 export default function SauceDispatcher() {
 
