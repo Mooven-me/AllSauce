@@ -8,6 +8,8 @@ use App\Enum\SauceCssEnum;
 use App\Enum\SauceServiceEnum;
 use App\Interface\Sauce\SauceServiceInterface;
 use App\Repository\SauceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Psr\Container\ContainerInterface;
 
@@ -29,6 +31,17 @@ class Sauce
 
     #[ORM\Column(enumType: SauceServiceEnum::class)]
     private ?SauceServiceEnum $service = null;
+
+    /**
+     * @var Collection<int, SauceRoom>
+     */
+    #[ORM\OneToMany(targetEntity: SauceRoom::class, mappedBy: 'sauce', orphanRemoval: true)]
+    private Collection $sauceRooms;
+
+    public function __construct()
+    {
+        $this->sauceRooms = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -78,5 +91,35 @@ class Sauce
         }
 
         return $sauceServiceLocator->get($this->service->value);
+    }
+
+    /**
+     * @return Collection<int, SauceRoom>
+     */
+    public function getSauceRooms(): Collection
+    {
+        return $this->sauceRooms;
+    }
+
+    public function addSauceRoom(SauceRoom $sauceRoom): static
+    {
+        if (!$this->sauceRooms->contains($sauceRoom)) {
+            $this->sauceRooms->add($sauceRoom);
+            $sauceRoom->setSauce($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSauceRoom(SauceRoom $sauceRoom): static
+    {
+        if ($this->sauceRooms->removeElement($sauceRoom)) {
+            // set the owning side to null (unless already changed)
+            if ($sauceRoom->getSauce() === $this) {
+                $sauceRoom->setSauce(null);
+            }
+        }
+
+        return $this;
     }
 }

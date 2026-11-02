@@ -28,6 +28,10 @@ class SauceRoom
     #[ORM\Column(length: 5, unique: true)]
     private ?string $roomCode = null;
 
+    #[ORM\ManyToOne(inversedBy: 'sauceRooms')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Sauce $sauce = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -83,6 +87,18 @@ class SauceRoom
     public function setRoomCode(string $roomCode): static
     {
         $this->roomCode = $roomCode;
+
+        return $this;
+    }
+
+    public function getSauce(): ?Sauce
+    {
+        return $this->sauce;
+    }
+
+    public function setSauce(?Sauce $sauce): static
+    {
+        $this->sauce = $sauce;
 
         return $this;
     }

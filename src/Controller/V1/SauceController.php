@@ -46,7 +46,7 @@ final class SauceController extends AbstractController
         return $this->json($sauceRepository->findOneBySlug($slug));
     }
 
-    #[Route('/create_room', name: 'api_sauce_create_sauce_room', methods: ['POST'])]
+    #[Route('/create_room', name: 'api_sauce_create_room', methods: ['POST'])]
     public function createSauceRoom(
         string $slug,
         SauceRepository $sauceRepository,
@@ -58,7 +58,7 @@ final class SauceController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $room = $this->rum->createRoom($user);
+        $room = $this->rum->createRoom($user, $sauce);
 
         return $this->json([
             'room_id' =>  $room->getRoomCode()

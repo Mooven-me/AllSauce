@@ -2,6 +2,7 @@
 
 namespace App\Service\Room;
 
+use App\Entity\Sauce;
 use App\Entity\SauceRoom;
 use App\Entity\User;
 use App\Repository\SauceRoomRepository;
@@ -19,7 +20,7 @@ class RoomUtilManager {
      * To create a room with a user wich will be a leader
      * @param user User leader 
      */
-    public function createRoom(User $user) : SauceRoom
+    public function createRoom(User $user, Sauce $sauce) : SauceRoom
     {
         $this->removeUserFromRoom($user);
 
@@ -28,6 +29,7 @@ class RoomUtilManager {
         
         $room->setLeader($user);
         $room->addUser($user);
+        $room->setSauce($sauce);
         $room->setRoomCode($this->generateUniqueRoomCode());
         $user->setSauceRoom($room);
 
