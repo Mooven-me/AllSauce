@@ -2,6 +2,8 @@ import React from "react"
 import { Card, CardBody, Col, Container, Input, InputGroup, Row, Button } from "reactstrap";
 import LoadingButton from "../../Utils/LoadingButton";
 import { useSauce } from "../../Utils/SauceProvider";
+import { sendData } from "../../Utils/sendData";
+import { useNavigate } from "react-router";
 
 export default function Lobby() {
 
@@ -11,9 +13,18 @@ export default function Lobby() {
     const roomId = React.useRef("");
     const { currentSauce, loadSauce } = useSauce();
     const usernameRef = React.useRef(window.IS_LOGGED_IN ? window.USERNAME : ""); // window.IS_LOGGED_IN TODO
+    const navigate = useNavigate();
 
     const createRoom = async () => {
-        console.log("room créé")
+        if(!usernameError && usernameRef.current.trim() !== ""){
+            setRoomCreationLoading(true)
+            await sendData({route: '/sauce/' + currentSauce.slug + '/create_room', data: {"username": usernameRef.current}}).then((data) => {
+                setRoomCreationLoading(false)
+                navigate('/'+ currentSauce.slug + '/' + data.room_id)
+            })
+        }else{
+            setUsernameError(true)
+        }
     }
 
     const handleUsernameChange = (e) => {

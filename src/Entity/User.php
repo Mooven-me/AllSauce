@@ -42,7 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
+    #[Ignore]
     #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: true, onDelete:'SET NULL')]
     private ?SauceRoom $sauceRoom = null;
 
     public function __construct()
