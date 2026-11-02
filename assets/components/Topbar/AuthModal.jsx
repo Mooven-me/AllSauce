@@ -13,7 +13,7 @@ import {
     NavItem,
     NavLink,
 } from "reactstrap";
-import { useAuth } from "../Utils/AuthProvider";
+import { useAuth } from "../Provider/AuthProvider";
 
 export default function AuthModal({ isOpen, toggle }) {
     const { login, register } = useAuth();

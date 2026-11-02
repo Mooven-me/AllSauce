@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { sendData } from "./sendData";
+import { sendData } from "../Utils/sendData";
 
 const AuthContext = createContext(null);
 

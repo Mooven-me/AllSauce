@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { sendData } from "./sendData";
+import { sendData } from "../Utils/sendData";
 
 const SauceContext = createContext(null);
 

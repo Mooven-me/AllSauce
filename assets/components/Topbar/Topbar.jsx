@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Badge, Button } from "reactstrap";
-import { useAuth } from "../Utils/AuthProvider";
+import { useAuth } from "../Provider/AuthProvider";
 import AuthModal from "./AuthModal";
 
 export default function Topbar() {

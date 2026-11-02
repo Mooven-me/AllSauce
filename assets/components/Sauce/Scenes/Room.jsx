@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import LoadingButton from "../../Utils/LoadingButton";
-import { useSauce } from "../../Utils/SauceProvider";
 import React from "react";
+import { useSauce } from "../../Provider/SauceProvider";
 
 export default function Room(){
 

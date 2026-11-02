@@ -1,10 +1,10 @@
 import { Route, Routes, useParams } from "react-router";
 import Lobby from "./Scenes/Lobby";
-import { useSauce } from "../Utils/SauceProvider";
 import React from "react";
 import { Spinner } from "reactstrap";
 import { sendData } from "../Utils/sendData";
 import Room from "./Scenes/Room";
+import { useSauce } from "../Provider/SauceProvider";
 
 export default function SauceDispatcher() {
 

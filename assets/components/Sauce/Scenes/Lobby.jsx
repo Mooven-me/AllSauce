@@ -1,9 +1,9 @@
 import React from "react"
 import { Card, CardBody, Col, Container, Input, InputGroup, Row, Button } from "reactstrap";
 import LoadingButton from "../../Utils/LoadingButton";
-import { useSauce } from "../../Utils/SauceProvider";
-import { sendData } from "../../Utils/sendData";
 import { useNavigate } from "react-router";
+import { useSauce } from "../../Provider/SauceProvider";
+import { sendData } from "../../Utils/sendData";
 
 export default function Lobby() {
 
@@ -11,7 +11,7 @@ export default function Lobby() {
     const [usernameError, setUsernameError] = React.useState(false);
     const [joinRoomError, setJoinRoomError] = React.useState(false);
     const roomId = React.useRef("");
-    const { currentSauce, loadSauce } = useSauce();
+    const { currentSauce, loadSauce }  = useSauce()
     const usernameRef = React.useRef(window.IS_LOGGED_IN ? window.USERNAME : ""); // window.IS_LOGGED_IN TODO
     const navigate = useNavigate();
 
