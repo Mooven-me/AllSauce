@@ -5,15 +5,22 @@ namespace App\Service\Room;
 use App\Entity\Sauce;
 use App\Entity\SauceRoom;
 use App\Entity\User;
+use App\Enum\MercureTypeEnum;
+use App\Message\RoomUpdateMessage;
 use App\Repository\SauceRoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\String\ByteString;
 
 class RoomUtilManager {
 
     public function __construct(
         private EntityManagerInterface $em,
-        private SauceRoomRepository $sauceRoomRepo
+        private SauceRoomRepository $sauceRoomRepo,
+        private MessageBusInterface $bus
     ){}
 
     /**
@@ -73,5 +80,19 @@ class RoomUtilManager {
 
             $this->em->flush();
         }
+    }
+
+    /**
+     * to start a sauce
+     */
+    public function startRoom(SauceRoom $room) : void{
+        // reset the game in case some users have still some points
+        foreach($room->getUsers() as $user){
+            $user->setScore(0);
+        }
+
+        // publish the state of the question
+        $roomUpdateMessage = new RoomUpdateMessage($room->getId(), MercureTypeEnum::START);
+        $this->bus->dispatch($roomUpdateMessage);
     }
 }

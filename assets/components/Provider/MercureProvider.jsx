@@ -13,7 +13,7 @@ export function MercureProvider({ topics = [], children }) {
 
         const url = new URL('/.well-known/mercure', window.location.origin);
         for (const topic of topicsKey.split('\n')) {
-            url.searchParams.append('topic', topic);
+            url.searchParams.append('match', topic);
         }
 
         const es = new EventSource(url, { withCredentials: true });
@@ -35,6 +35,14 @@ export function MercureProvider({ topics = [], children }) {
             {children}
         </MercureContext.Provider>
     );
+}
+
+export const useMercure = () => {
+    const context = useContext(MercureContext)
+    if (!context) {
+        throw new Error("useMercure must be used within an MercureProvider");
+    }
+    return context
 }
 
 /**

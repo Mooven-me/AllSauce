@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: SauceRepository::class)]
 #[Formable(path: 'sauce')]
@@ -36,6 +37,7 @@ class Sauce
      * @var Collection<int, SauceRoom>
      */
     #[ORM\OneToMany(targetEntity: SauceRoom::class, mappedBy: 'sauce', orphanRemoval: true)]
+    #[Ignore]
     private Collection $sauceRooms;
 
     public function __construct()

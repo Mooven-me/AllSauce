@@ -64,4 +64,25 @@ final class SauceController extends AbstractController
             'room_id' =>  $room->getRoomCode()
         ]);
     }
+
+
+    #[Route('/start', name: 'api_sauce_start', methods: ['POST'])]
+    public function startSauce(
+        string $slug,
+        SauceRepository $sauceRepository,
+        #[CurrentUser] ?User $user,
+    ){
+        /** @var \App\Entity\Sauce|null $sauce */
+        $sauce = $sauceRepository->findOneBySlug($slug);
+        if ($sauce === null || $user === null) {
+            throw $this->createNotFoundException();
+        }
+
+        $room = $user->getSauceRoom();
+        if($room->getLeader() !== $user) throw $this->createNotFoundException();
+
+        $this->rum->startRoom($room);
+        
+        return $this->json([]);
+    }
 }

@@ -37,6 +37,10 @@ class SauceRoom
         $this->users = new ArrayCollection();
     }
 
+    public function getId() : ?int {
+        return $this->id;
+    }
+
     public function getLeader(): ?User
     {
         return $this->leader;

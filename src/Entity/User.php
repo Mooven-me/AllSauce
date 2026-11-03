@@ -47,6 +47,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: true, onDelete:'SET NULL')]
     private ?SauceRoom $sauceRoom = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $score = null;
+
     public function __construct()
     {
         $this->uuid = Uuid::v7();
@@ -149,6 +152,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSauceRoom(?SauceRoom $sauceRoom): static
     {
         $this->sauceRoom = $sauceRoom;
+
+        return $this;
+    }
+
+    public function getScore(): ?int
+    {
+        return $this->score;
+    }
+
+    public function setScore(?int $score): static
+    {
+        $this->score = $score;
 
         return $this;
     }
