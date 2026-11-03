@@ -17,7 +17,8 @@
         "php",
         "database",
         "vite",
-        "whodb"
+        "whodb",
+        "messenger"
     ],
     "workspaceFolder": "/app",
     "remoteUser": "nonroot",
