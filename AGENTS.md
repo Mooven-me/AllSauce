@@ -106,3 +106,49 @@ things up in the project instead of relying on memory:
 - Read the installed source and docblocks under `vendor/`.
 - Docs: https://symfony.com/doc/current/ (switch to the version matching
   `composer.json` if it differs).
+
+## Project Architecture & Domain ("Sauce" Quiz App)
+
+### Domain Concept: What is a "Sauce"?
+- **Not culinary**: In this project, a **"Sauce"** is a quiz game topic / theme / mode (e.g. `LoLSauce` for League of Legends, `BlankSauce` as a default). Never treat sauces as food or recipes.
+- **`Sauce` entity (`App\Entity\Sauce`)**: Represents a quiz topic with `name`, `slug` (URL identifier), and `service` (`SauceServiceEnum`).
+- **`SauceRoom` entity (`App\Entity\SauceRoom`)**: A multiplayer match room with a unique 5-character `roomCode` (e.g. `K7PX9`), a `leader` (`User`), connected `users` (Collection of `User`), and a linked `Sauce`.
+- **`User` entity (`App\Entity\User`)**: Players identify with a UUID v7. Users default to `anonymous = true`, and can later link an email/password. Tracks `score` and the active `sauceRoom`.
+
+### Technical Architecture
+- **Backend**: Symfony 8.1 / PHP 8.5+ with Doctrine ORM (PostgreSQL), Symfony Messenger (async queues via `doctrine_messenger` / PostgreSQL `LISTEN/NOTIFY`), Symfony Lock, and Mercure SSE for real-time multiplayer updates.
+- **Frontend**: React 19 Single Page Application rendered via Pentatrion ViteBundle (`templates/base/index.html.twig` -> `assets/main.jsx`).
+- **Authentication**: Stateless JWT + refresh tokens stored in httpOnly cookies (`lexik/jwt-authentication-bundle` + `gesdinet/jwt-refresh-token-bundle`). Handled by `JwtCookieAuthenticatorService` and frontend `sendData.jsx` wrapper with transparent 401 refresh.
+
+### Dynamic Theming & Sauce Services
+- Each sauce has an implementation of `SauceServiceInterface` (e.g. `LoLSauceService`), autowired via `SauceServiceEnum`.
+- The service maps to a `SauceCssEnum` (`LoLSauceCss`), which defines structured CSS rules (colors, animated background images, buttons).
+- Endpoint `GET /api/v1/sauce/{slug}/css` serves these rules, and `SauceDispatcher.jsx` dynamically injects them into the document `<head>` when entering a sauce.
+
+### Real-Time Multiplayer Lifecycle (Mercure + Messenger)
+1. **Creation / Join**: User enters pseudo at `/:slug` (`Lobby.jsx`). Creating a room triggers `POST /api/v1/sauce/{slug}/create_room`, handled by `RoomUtilManager::createRoom` (generates 5-char code, sets leader, redirects to `/:slug/:roomCode`).
+2. **Channel Subscription**: `RoomDispatcher.jsx` connects via `MercureProvider` to SSE topic `https://subscribed.channel/room/{slug}/{roomCode}`.
+3. **Game Launch**: Leader clicks start (`POST /api/v1/sauce/{slug}/start`). `RoomUtilManager::startRoom()` resets scores and dispatches `RoomUpdateMessage($roomId, MercureTypeEnum::START)`.
+4. **Message Handling**: `RoomUpdateMessageHandler` uses `#[AutowireLocator(SauceMessageHandlerInterface::class)]` keyed by handler class to execute `StartMessageHandler`, which publishes the `"start"` event to the Mercure room topic.
+
+### Dynamic JSON Schema Engine (`Formable`)
+- Entity classes tagged with `#[Formable(path: '...')]` (e.g. `Sauce`) and property tag `#[NotFormable]` are indexed by `FormableRegistry`.
+- `AutoSchemaBuilder` reflects the entity and serves JSON Schema at `GET /api/v1/form/{path}`.
+- The frontend renders dynamic modals (`DynamicSchemaModal.jsx`) via `@rjsf/core` without hand-crafting form fields.
+
+### Key Directory Map
+- `src/Entity/`: `Sauce.php`, `SauceRoom.php`, `User.php`, `RefreshToken.php`.
+- `src/Controller/V1/`: `AuthController.php`, `SaucesController.php`, `SauceController.php`, `FormController.php`.
+- `src/Enum/`: `SauceServiceEnum.php`, `SauceCssEnum.php`, `MercureTypeEnum.php`.
+- `src/Service/Room/`: `RoomUtilManager.php` (room code generation, player joining/removal, match start).
+- `src/Service/Sauce/`: `SauceServiceInterface.php`, `SauceServiceAbstract.php`, `LoLSauceService.php`, `BlankSauceService.php`.
+- `src/Sauce/Css/`: `CssInterface.php`, `LoLSauceCss.php`, `BlankCss.php`.
+- `src/Message/` & `src/MessageHandler/`: `RoomUpdateMessage.php`, `RoomUpdateMessageHandler.php`.
+- `src/Service/SauceMessage/`: `SauceMessageHandlerInterface.php`, `StartMessageHandler.php`.
+- `assets/components/`:
+  - `Index/Sauces.jsx`: Grid of available sauces.
+  - `Sauce/Scenes/Lobby.jsx`: Room creation/joining interface.
+  - `Sauce/Scenes/RoomDispatcher.jsx`: Mercure room wrapper.
+  - `Sauce/Scenes/Room.jsx`: Waiting room lobby.
+  - `Utils/sendData.jsx`: Authenticated fetch wrapper with automatic token refresh.
+  - `Utils/Form/`: `useDynamicForm.jsx` & `DynamicSchemaModal.jsx` (RJSF form integration).
