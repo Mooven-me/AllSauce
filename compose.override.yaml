@@ -11,7 +11,7 @@ services:
       - ./frankenphp/Caddyfile:/etc/frankenphp/Caddyfile:ro
       - ./frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
       # Keep var/ off the bind-mount for faster I/O on Mac/Windows; comment to inspect from the host.
-      - /app/var
+      - php_var:/app/var
       # If you develop on Mac or Windows you can remove the vendor/ directory
       #  from the bind-mount for better performance by enabling the next line:
       #- /app/vendor
@@ -55,13 +55,15 @@ services:
 
   messenger:
     image: ${IMAGES_PREFIX:-}app-php-dev
+    healthcheck:
+      disable: true
     build:
       context: .
       target: frankenphp_dev
     volumes:
       - ./:/app
       - ./frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
-      - /app/var
+      - php_var:/app/var
     environment:
       APP_ENV: "${APP_ENV:-dev}"
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
@@ -77,3 +79,4 @@ services:
 
 volumes:
   vite_node_modules:
+  php_var:
