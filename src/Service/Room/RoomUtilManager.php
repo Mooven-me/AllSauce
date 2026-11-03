@@ -9,9 +9,6 @@ use App\Enum\MercureTypeEnum;
 use App\Message\RoomUpdateMessage;
 use App\Repository\SauceRoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\String\ByteString;
 
