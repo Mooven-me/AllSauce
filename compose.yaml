@@ -64,7 +64,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    command: ["php", "bin/console", "messenger:consume", "async", "--time-limit=3600", "--memory-limit=128M"]
 ###< symfony/messenger ###
 
 volumes:

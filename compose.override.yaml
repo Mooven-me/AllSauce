@@ -67,6 +67,7 @@ services:
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
     extra_hosts:
       - host.docker.internal:host-gateway
+    command: ["php", "bin/console", "messenger:consume", "async", "--time-limit=3600", "--memory-limit=128M", "-vv"]
 
 ###> doctrine/doctrine-bundle ###
   database:
