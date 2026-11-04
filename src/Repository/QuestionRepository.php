@@ -19,7 +19,7 @@ class QuestionRepository extends ServiceEntityRepository
     public function deleteByManagerClass(string $class){
         $query = $this->createQueryBuilder('q')
                 ->andWhere('q.managerClass = :managerClass')
-                ->setParameter('managerClass', $class)
+                ->setParameter('type', $class)
                 ->delete()
                 ->getQuery()
                 ->execute();
