@@ -44,6 +44,7 @@ class Sauce
      * @var Collection<int, Question>
      */
     #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'sauce', orphanRemoval: true)]
+    #[Ignore]
     private Collection $questions;
 
     public function __construct()
