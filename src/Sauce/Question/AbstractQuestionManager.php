@@ -2,6 +2,8 @@
 
 namespace App\Sauce\Question;
 
+use App\Dto\Question\Questions;
+use App\Dto\Question\QuestionsInterface;
 use App\Entity\Question;
 use App\Entity\Sauce;
 use App\Enum\SauceServiceEnum;
@@ -28,30 +30,65 @@ abstract class AbstractQuestionManager {
     /**
      * to generate the question
      */
-    abstract public function handleQuestionCreation(): Question;
+    abstract public function handleQuestionsCreation(): QuestionsInterface;
 
     /**
-     * to create the question (only persist it for now)
+     * to set the type of the current question in the database, 
+     * so you can know from wich service it has been craeted
+     * and also select question about its type
      */
-    protected function createQuestion(Question $question){
-        $question->setSauce($this->getSauce());
-        $this->em->persist($question);
-    }
+    public function getManagerClass() : string { return self::class; }
 
     protected function getSauce() : Sauce {
-        return $this->em->getRepository(Sauce::class)->findOneBySauceServiceEnum($this->getSauceServiceEnum());
+        static $sauce = null;
+        if(!$sauce){
+            $sauce = $this->em->getRepository(Sauce::class)->findOneByService($this->getSauceServiceEnum());
+        }
+        return $sauce;
     }
 
     /**
      * to remove accents, and set the word in UPPER
      */
-    public function normalize(string $string) {
-        // Convert accented characters to ASCII equivalents
-        $string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
+    public function normalize(string $string): string 
+    {
+        // Decompose characters, strip Nonspacing Marks (accents/diacritics), re-compose
+        $transliterator = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC');
+        $string = $transliterator->transliterate($string);
+    
+        return mb_strtoupper($string, 'UTF-8');
+    }
 
-        // Convert to uppercase in a multibyte-safe way
-        $string = mb_strtoupper($string, 'UTF-8');
+    /**
+     * to remove accents, and set the words in UPPER from an array
+     */
+    public function normalizeArray(array $strings) : array {
+        $result=[];
+        foreach($strings as $string){
+            $result[] = $this->normalize($string);
+        }
+    
+        return $result;
+    }
 
-        return $string;
+    public function run() {
+        /** @var QuestionsInterface */
+        $questions = $this->handleQuestionsCreation(); 
+        foreach($questions as $question){
+            $question->setSauce($this->getSauce());
+            $question->setManagerClass($this->getManagerClass());
+            $this->em->persist($question);
+        }
+        $this->em->getRepository(Question::class)->deleteByManagerClass($this->getManagerClass());
+        $this->em->flush();
+    }
+
+    /**
+     * to get the downloaded file path automatically
+     * @param $filename to force a file name
+     */
+    protected function getDownloadPath(?string $filename = null) : string {
+        if(!$filename) $filename = $this->getSauce()->getSlug(); 
+        return AbstractDownloaderManager::$DOWNLOAD_PATH.'/'.$filename;
     }
 }

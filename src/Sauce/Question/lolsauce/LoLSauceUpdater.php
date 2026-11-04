@@ -2,9 +2,14 @@
 
 namespace App\Sauce\Question\lolsauce;
 
+use App\Enum\SauceServiceEnum;
 use App\Sauce\Question\AbstractUpdateManager;
 
 class LoLSauceUpdater extends AbstractUpdateManager {
+
+    public function getSauceServiceEnum() : SauceServiceEnum {
+        return SauceServiceEnum::LoLSauce;
+    }
     
     public function getVersion() : string {
         $response = $this->httpClient->request('GET', 'https://ddragon.leagueoflegends.com/api/versions.json');
@@ -12,8 +17,7 @@ class LoLSauceUpdater extends AbstractUpdateManager {
     }
 
     public function run() : void {
-        $fileName = 'lolsauce';
-        #$this->download('https://ddragon.leagueoflegends.com/cdn/dragontail-'.$this->getVersion().'.tgz', $fileName);
-        $this->extract($fileName);
+        $this->download('https://ddragon.leagueoflegends.com/cdn/dragontail-'.$this->getVersion().'.tgz');
+        $this->extract();
     }
 }

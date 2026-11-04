@@ -9,10 +9,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 #[AsCommand(
-    name: 'allsauce:load:questions',
+    name: 'allsauce:download',
     description: 'Download and load every questions of allsauce sauces',
 )]
-class AllsauceLoadQuestionsCommand{
+class AllsauceDownloadCommand{
     public function __invoke(
         SymfonyStyle $io,
         /** @var iterable<AbstractDownloaderManager> $saucesDownloadManager */

@@ -2,6 +2,9 @@
 
 namespace App\Sauce\Question;
 
+use App\Entity\Sauce;
+use App\Enum\SauceServiceEnum;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -14,7 +17,8 @@ abstract class AbstractDownloaderManager {
 
     protected HttpClientInterface $httpClient;
     protected Filesystem $filesystem;
-    private string $DOWNLOAD_PATH = '/tmp/allsauce';
+    protected EntityManagerInterface $em;
+    public static string $DOWNLOAD_PATH = '/tmp/allsauce';
 
     #[Required]
     public function setHttpClient(HttpClientInterface $httpClient){
@@ -26,19 +30,27 @@ abstract class AbstractDownloaderManager {
         $this->filesystem = $filesystem;
     }
 
+    #[Required]
+    public function setEntityManager(EntityManagerInterface $em): void
+    {
+        $this->em = $em;
+    }
+
+    abstract public function getSauceServiceEnum() : SauceServiceEnum;
+
     protected function download(string $url, ?string $fileName = null, string $method = 'GET') : void {
         $response = $this->httpClient->request($method, $url);
 
         // generate the file name and full path
         if(!$fileName){
-            $fileName = uniqid();
+            $fileName = $this->getSauce()->getSlug();
         }
         
-        if(!$this->filesystem->exists($this->DOWNLOAD_PATH)){
-            $this->filesystem->mkdir($this->DOWNLOAD_PATH);
+        if(!$this->filesystem->exists(self::$DOWNLOAD_PATH)){
+            $this->filesystem->mkdir(self::$DOWNLOAD_PATH);
         }
         
-        $filePath = $this->DOWNLOAD_PATH . '/' . $fileName;
+        $filePath = self::$DOWNLOAD_PATH . '/' . $fileName;
 
         // store the new file (this method allow streaming directly)
         $fileHandle = fopen($filePath.'.tgz', 'w');
@@ -55,11 +67,16 @@ abstract class AbstractDownloaderManager {
         fclose($fileHandle);
     }
 
-    protected function extract(string $fileName) : void {
-        $filePath = $this->DOWNLOAD_PATH . '/' . $fileName;
+    protected function extract(?string $fileName = null) : void {
+        $filePath = self::$DOWNLOAD_PATH . '/' . $fileName;
 
         if (!$this->filesystem->exists($filePath)) {
             $this->filesystem->mkdir($filePath);
+        }
+
+        // generate the file name and full path
+        if(!$fileName){
+            $fileName = $this->getSauce()->getSlug();
         }
 
         $process = Process::fromShellCommandline('tar -xzf ' . escapeshellarg($filePath.'.tgz') . ' -C ' . escapeshellarg($filePath) . ' --no-same-owner --no-same-permissions');
@@ -75,4 +92,8 @@ abstract class AbstractDownloaderManager {
     }
 
     abstract public function run() : void;
+
+    protected function getSauce() : Sauce {
+        return $this->em->getRepository(Sauce::class)->findOneBySauceServiceEnum($this->getSauceServiceEnum());
+    }
 }

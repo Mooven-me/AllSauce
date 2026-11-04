@@ -28,6 +28,9 @@ abstract class Question
     #[ORM\Column]
     private array $answers = [];
 
+    #[ORM\Column(length: 255)]
+    private ?string $managerClass = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -65,6 +68,18 @@ abstract class Question
     public function setAnswers(array $answers): static
     {
         $this->answers = $answers;
+
+        return $this;
+    }
+
+    public function getManagerClass(): ?string
+    {
+        return $this->managerClass;
+    }
+
+    public function setManagerClass(string $managerClass): static
+    {
+        $this->managerClass = $managerClass;
 
         return $this;
     }
