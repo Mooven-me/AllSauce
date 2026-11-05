@@ -3,6 +3,10 @@ import { MercureProvider, useMercureEvents } from "../../Provider/MercureProvide
 import { useEffect, useMemo, useState } from "react";
 import Room from "./Room";
 import { useSauceRoom } from "../../Provider/SauceRoomProvider";
+import GameQueued from "./GameQueued";
+import QuestionDispatcher from "./Question/QuestionDIspatcher";
+import Answer from "./Answer";
+import { Spinner } from "reactstrap";
 
 
 function MercureRoomDispatcher(){
@@ -10,18 +14,23 @@ function MercureRoomDispatcher(){
     const [scene, setScene] = useState('room');
 
     useMercureEvents({
-        'start': (data) => console.log("start"),
-        'question': (data) => console.log("question"),
-        'answer': (data) => console.log("answer"),
+        'room': (data) => setScene('start'),
+        'start': (data) => setScene('start'),
+        'question': (data) => setScene("question"),
+        'answer': (data) => setScene("answer"),
     });
 
     const handleDispatch = useMemo(() => {
-        let content = <></>
         switch(scene){
             case "room":
-                content = <Room />
+                return <Room />
+            case "start":
+                return <GameQueued />
+            case "question":
+                return <QuestionDispatcher />
+            case "answer":
+                return <Answer />
         }
-        return content
     }, [scene])
 
     return handleDispatch
@@ -30,7 +39,7 @@ function MercureRoomDispatcher(){
 export default function RoomDispatcher() {
 
     const params = useParams();
-    const { setSauceRoom } = useSauceRoom();
+    const { setSauceRoom, isLoading } = useSauceRoom();
 
     useEffect(() => {
         setSauceRoom(params.slug, params.roomCode)
@@ -38,7 +47,12 @@ export default function RoomDispatcher() {
 
     return (
         <MercureProvider topics={[`https://subscribed.channel/room/${params.slug}/${params.roomCode}`]}>
-            <MercureRoomDispatcher />
+            {
+                isLoading ? 
+                    <Spinner />
+                :
+                    <MercureRoomDispatcher />
+            }
         </MercureProvider>
     )
 }

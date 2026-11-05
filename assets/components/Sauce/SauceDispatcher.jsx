@@ -67,10 +67,12 @@ export default function SauceDispatcher() {
 
     return (
         <>
-            <div className={"position-absolute w-100 h-100 d-flex justify-content-center align-items-center"} style={{backgroundColor: "rgba(115, 115, 115, 0.5)", opacity: isLoading ? 1 : 0}}>
-                <Spinner />
-            </div>
-            {!isLoading &&
+            {
+                isLoading ? 
+                <div className={"w-100 h-100 d-flex justify-content-center align-items-center"} style={{backgroundColor: "rgba(115, 115, 115, 0.5)"}}>
+                    <Spinner />
+                </div>
+                :
                 <Routes>
                     <Route path='' element={<Lobby />} />
                     <Route path='/:roomCode' element={<RoomDispatcher />} />
