@@ -1,13 +1,13 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { sendData } from "../Utils/sendData";
 
 const SauceContext = createContext(null);
 
 export function SauceProvider({ children }) {
-    const [currentSauce, setCurrentSauce] = useState(null);
+    const [sauce, setCurrentSauce] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const loadSauce = async (slug) => {
+    const setSauce = async (slug) => {
         setLoading(true);
 
         const data = await sendData({ route: `/sauce/${slug}`, method: "GET" });
@@ -19,7 +19,7 @@ export function SauceProvider({ children }) {
     };
 
     return (
-        <SauceContext.Provider value={{ currentSauce, setCurrentSauce, loadSauce, loading }}>
+        <SauceContext.Provider value={{ sauce, setSauce, loading }}>
             {children}
         </SauceContext.Provider>
     );

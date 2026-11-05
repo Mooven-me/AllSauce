@@ -4,12 +4,12 @@ import { sendData } from "../../Utils/sendData";
 
 export default function Room(){
 
-    const {currentSauce, loadSauce} = useSauce()
+    const { sauce } = useSauce()
     const isGameStarted = false;
     const isLeader = true;
 
     const handleStartGame = async () => {
-        await sendData({ route: '/sauce/' + currentSauce.slug + '/start', method: "POST" })
+        await sendData({ route: '/sauce/' + sauce.slug + '/start', method: "POST" })
     }
 
     return (

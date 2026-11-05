@@ -11,16 +11,16 @@ export default function Lobby() {
     const [usernameError, setUsernameError] = React.useState(false);
     const [joinRoomError, setJoinRoomError] = React.useState(false);
     const roomId = React.useRef("");
-    const { currentSauce, loadSauce }  = useSauce()
+    const { sauce }  = useSauce()
     const usernameRef = React.useRef(window.IS_LOGGED_IN ? window.USERNAME : ""); // window.IS_LOGGED_IN TODO
     const navigate = useNavigate();
 
     const createRoom = async () => {
         if(!usernameError && usernameRef.current.trim() !== ""){
             setRoomCreationLoading(true)
-            await sendData({route: '/sauce/' + currentSauce.slug + '/create_room', data: {"username": usernameRef.current}}).then((data) => {
+            await sendData({route: '/sauce/' + sauce.slug + '/create_room', data: {"username": usernameRef.current}}).then((data) => {
                 setRoomCreationLoading(false)
-                navigate('/'+ currentSauce.slug + '/' + data.room_id)
+                navigate('/'+ sauce.slug + '/' + data.room_id)
             })
         }else{
             setUsernameError(true)
@@ -53,7 +53,7 @@ export default function Lobby() {
     <div className="position-relative w-100 h-100">
         <Container className={"flex-grow-1"}>
             <div className="lobby-title align-items-center justify-content-center d-flex" style={{fontSize: "10vw", marginTop:"50px"}}>
-                {currentSauce.name}
+                {sauce.name}
             </div>
             <div className='vstack gap-5'>
                 <Row className="gy-3 justify-content-center">

@@ -8,7 +8,7 @@ import RoomDispatcher from "./Scenes/RoomDispatcher";
 
 export default function SauceDispatcher() {
 
-    const { currentSauce, loadSauce } = useSauce();
+    const { setSauce } = useSauce();
     const [cssMap, setCssMap] = React.useState({})
     const params = useParams();
     const [isLoading, setIsLoading] = React.useState(true)
@@ -53,7 +53,7 @@ export default function SauceDispatcher() {
                 // both functions use "sendData" wich automatically send errors 
                 const [cssData, sauceData] = await Promise.all([
                     sendData({ route: '/sauce/' + params.slug + '/css', method: 'GET' }).then(data => setCssMap(data)),
-                    loadSauce(params.slug)
+                    setSauce(params.slug)
                 ]);
                 setIsLoading(false);
             } catch (error) {

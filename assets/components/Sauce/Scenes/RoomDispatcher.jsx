@@ -1,7 +1,8 @@
 import { useParams } from "react-router";
 import { MercureProvider, useMercureEvents } from "../../Provider/MercureProvider";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Room from "./Room";
+import { useSauceRoom } from "../../Provider/SauceRoomProvider";
 
 
 function MercureRoomDispatcher(){
@@ -29,6 +30,11 @@ function MercureRoomDispatcher(){
 export default function RoomDispatcher() {
 
     const params = useParams();
+    const { setSauceRoom } = useSauceRoom();
+
+    useEffect(() => {
+        setSauceRoom(params.slug, params.roomCode)
+    }, [params.roomCode, params.slug])
 
     return (
         <MercureProvider topics={[`https://subscribed.channel/room/${params.slug}/${params.roomCode}`]}>

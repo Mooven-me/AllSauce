@@ -1,12 +1,15 @@
 import { AuthProvider } from "./AuthProvider";
 import { SauceProvider } from "./SauceProvider";
+import { SauceRoomProvider } from "./SauceRoomProvider";
 
 export default function Providers({children}){
 
     return (
         <AuthProvider>
             <SauceProvider>
-                {children}
+                <SauceRoomProvider>
+                    {children}
+                </SauceRoomProvider>
             </SauceProvider>
         </AuthProvider>
     )
