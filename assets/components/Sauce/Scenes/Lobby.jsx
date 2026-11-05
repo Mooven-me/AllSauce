@@ -1,31 +1,19 @@
-import React from "react"
+import { useRef, useState } from "react"
 import { Card, CardBody, Col, Container, Input, InputGroup, Row, Button } from "reactstrap";
 import LoadingButton from "../../Utils/LoadingButton";
 import { useNavigate } from "react-router";
 import { useSauce } from "../../Provider/SauceProvider";
-import { sendData } from "../../Utils/sendData";
+import { useSauceRoom } from "../../Provider/SauceRoomProvider";
 
 export default function Lobby() {
 
-    const [roomCreationLoading, setRoomCreationLoading] = React.useState(false);
-    const [usernameError, setUsernameError] = React.useState(false);
-    const [joinRoomError, setJoinRoomError] = React.useState(false);
-    const roomId = React.useRef("");
+    const [usernameError, setUsernameError] = useState(false);
+    const [joinRoomError, setJoinRoomError] = useState(false);
+    const roomId = useRef("");
     const { sauce }  = useSauce()
-    const usernameRef = React.useRef(window.IS_LOGGED_IN ? window.USERNAME : ""); // window.IS_LOGGED_IN TODO
+    const usernameRef = useRef(window.IS_LOGGED_IN ? window.USERNAME : ""); // window.IS_LOGGED_IN TODO
     const navigate = useNavigate();
-
-    const createRoom = async () => {
-        if(!usernameError && usernameRef.current.trim() !== ""){
-            setRoomCreationLoading(true)
-            await sendData({route: '/sauce/' + sauce.slug + '/create_room', data: {"username": usernameRef.current}}).then((data) => {
-                setRoomCreationLoading(false)
-                navigate('/'+ sauce.slug + '/' + data.room_id)
-            })
-        }else{
-            setUsernameError(true)
-        }
-    }
+    const { createRoom, roomCreationLoading } = useSauceRoom()
 
     const handleUsernameChange = (e) => {
         if(e.target.value.length <=15){
@@ -35,6 +23,14 @@ export default function Lobby() {
             }else{
                 setUsernameError(true)
             }
+        }
+    }
+
+    const handleRoomCreation = () => {
+        if(!usernameError && usernameRef.current.trim() !== ""){
+            createRoom(sauce.slug, usernameRef.current)
+        }else{
+            setUsernameError(true)
         }
     }
 
@@ -82,13 +78,13 @@ export default function Lobby() {
                         <Card color={'secondary'} className={"lobby-button p-0"}>
                             <CardBody>
                                 <InputGroup>
-                                    <LoadingButton color={"primary"} style={{width:"101px"}} className='shadow' onClick={createRoom} forceLoading={roomCreationLoading}>
+                                    <LoadingButton color={"primary"} style={{width:"101px"}} className='shadow' onClick={handleRoomCreation} forceLoading={roomCreationLoading}>
                                         <b>Créer</b>
                                     </LoadingButton>
                                     <Input
                                         className='shadow'
                                         placeholder='Pseudo'
-                                        onKeyUpCapture={(e) => e.key === 'Enter' && createRoom()}
+                                        onKeyUpCapture={(e) => e.key === 'Enter' && handleRoomCreation()}
                                         onChange={(e) => handleUsernameChange(e)}
                                         invalid={usernameError}
                                         maxLength={32}

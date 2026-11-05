@@ -1,15 +1,17 @@
 import LoadingButton from "../../Utils/LoadingButton";
 import { useSauce } from "../../Provider/SauceProvider";
 import { sendData } from "../../Utils/sendData";
+import { useSauceRoom } from "../../Provider/SauceRoomProvider";
 
 export default function Room(){
 
-    const { sauce } = useSauce()
+    const { sauce } = useSauce();
+    const { startRoom } = useSauceRoom();
     const isGameStarted = false;
     const isLeader = true;
 
     const handleStartGame = async () => {
-        await sendData({ route: '/sauce/' + sauce.slug + '/start', method: "POST" })
+        startRoom(sauce.slug)
     }
 
     return (
