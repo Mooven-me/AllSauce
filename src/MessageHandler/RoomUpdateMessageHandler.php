@@ -26,6 +26,6 @@ final class RoomUpdateMessageHandler{
         }
 
         $handler = $this->handlers->get($message->getType()->value);
-        $handler->run($room, $message->getType());
+        $handler->run($room);
     }
 }

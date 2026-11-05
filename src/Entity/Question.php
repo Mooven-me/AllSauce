@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\QuestionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 #[ORM\InheritanceType('SINGLE_TABLE')]
@@ -23,9 +24,11 @@ abstract class Question
 
     #[ORM\ManyToOne(inversedBy: 'questions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Ignore]
     private ?Sauce $sauce = null;
 
     #[ORM\Column]
+    #[Ignore]
     private array $answers = [];
 
     #[ORM\Column(length: 255)]

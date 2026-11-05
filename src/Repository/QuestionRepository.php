@@ -25,4 +25,23 @@ class QuestionRepository extends ServiceEntityRepository
                 ->execute();
         return $query;
     }
+
+    public function findOneRandomly() : Question {
+        $managerClass = $this->createQueryBuilder('q')
+                ->select('q.managerClass')
+                ->groupBy('q.managerClass')
+                ->orderBy('RANDOM()')
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getSingleScalarResult();
+        
+        return $this->createQueryBuilder('q')
+                ->orderBy('RANDOM()')
+                ->andWhere('q.managerClass = :managerClass')
+                ->setParameter('managerClass', $managerClass)
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+    }
 }

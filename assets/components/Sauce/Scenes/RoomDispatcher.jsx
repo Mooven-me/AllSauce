@@ -9,9 +9,9 @@ function MercureRoomDispatcher(){
     const [scene, setScene] = useState('room');
 
     useMercureEvents({
-        'start': (data) => console.log("REUSSI"),
-        'room:scene_change': (data) => setScene(data.newScene),
-        'room:player_joined': (data) => console.log('Player joined', data),
+        'start': (data) => console.log("start"),
+        'question': (data) => console.log("question"),
+        'answer': (data) => console.log("answer"),
     });
 
     const handleDispatch = useMemo(() => {
