@@ -2,18 +2,22 @@
 
 namespace App\Controller\V1;
 
+use App\Entity\Sauce;
 use App\Entity\User;
 use App\Interface\Sauce\SauceServiceInterface;
 use App\Repository\SauceRepository;
 use App\Service\Room\RoomUtilManager;
 use Psr\Container\ContainerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/sauce/{slug}')]
+#[IsGranted('ROLE_USER')]
 final class SauceController extends AbstractController
 {
     public function __construct(
@@ -22,67 +26,35 @@ final class SauceController extends AbstractController
 
     #[Route('/css', name: 'api_sauce_get_sauce_css', methods: ['GET'])]
     public function getSauceCss(
-        SauceRepository $sauceRepository,
         #[AutowireLocator(SauceServiceInterface::class)]
         ContainerInterface $sauceServiceLocator,
-        string $slug,
-    ): Response {
-        /** @var \App\Entity\Sauce|null $sauce */
-        $sauce = $sauceRepository->findOneBySlug($slug);
-        if ($sauce === null) {
-            throw $this->createNotFoundException();
-        }
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        Sauce $sauce,
+    ) : JsonResponse {
 
         $sauceService = $sauce->getSauceService($sauceServiceLocator);
-
         return $this->json($sauceService?->getCssClass()->getCss() ?? []);
     }
 
     #[Route('/', name: 'api_sauce_get_sauce', methods: ['GET'])]
     public function getSauce(
-        string $slug,
-        SauceRepository $sauceRepository,
-    ){
-        return $this->json($sauceRepository->findOneBySlug($slug));
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        Sauce $sauce,
+    ) : JsonResponse {
+        
+        return $this->json($sauce);
     }
 
     #[Route('/create_room', name: 'api_sauce_create_room', methods: ['POST'])]
     public function createSauceRoom(
-        string $slug,
-        SauceRepository $sauceRepository,
-        #[CurrentUser] ?User $user,
-    ){
-        /** @var \App\Entity\Sauce|null $sauce */
-        $sauce = $sauceRepository->findOneBySlug($slug);
-        if ($sauce === null || $user === null) {
-            throw $this->createNotFoundException();
-        }
+        #[MapEntity(mapping: ['slug' => 'slug'])]
+        Sauce $sauce,
+        #[CurrentUser] User $user,
+    ) : JsonResponse {$
 
         $room = $this->rum->createRoom($user, $sauce);
-
         return $this->json([
             'room_id' =>  $room->getRoomCode()
         ]);
-    }
-
-
-    #[Route('/start', name: 'api_sauce_start', methods: ['POST'])]
-    public function startSauce(
-        string $slug,
-        SauceRepository $sauceRepository,
-        #[CurrentUser] ?User $user,
-    ){
-        /** @var \App\Entity\Sauce|null $sauce */
-        $sauce = $sauceRepository->findOneBySlug($slug);
-        if ($sauce === null || $user === null) {
-            throw $this->createNotFoundException();
-        }
-
-        $room = $user->getSauceRoom();
-        if($room->getLeader() !== $user) throw $this->createNotFoundException();
-
-        $this->rum->startRoom($room);
-        
-        return $this->json([]);
     }
 }
