@@ -16,6 +16,18 @@ class SauceRoomRepository extends ServiceEntityRepository
         parent::__construct($registry, SauceRoom::class);
     }
 
+    public function findOneBySlugAndCode(string $slug, string $roomCode): ?SauceRoom
+    {
+        return $this->createQueryBuilder('r')
+            ->innerJoin('r.sauce', 's')
+            ->andWhere('s.slug = :slug')
+            ->andWhere('r.roomCode = :roomCode')
+            ->setParameter('slug', $slug)
+            ->setParameter('roomCode', $roomCode)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 //    /**
 //     * @return SauceRoom[] Returns an array of SauceRoom objects
 //     */

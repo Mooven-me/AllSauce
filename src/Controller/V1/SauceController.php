@@ -41,7 +41,8 @@ final class SauceController extends AbstractController
         #[MapEntity(mapping: ['slug' => 'slug'])]
         Sauce $sauce,
     ) : JsonResponse {
-        
+
+        // serialize without the confidential informations of the user
         return $this->json($sauce);
     }
 
@@ -50,7 +51,7 @@ final class SauceController extends AbstractController
         #[MapEntity(mapping: ['slug' => 'slug'])]
         Sauce $sauce,
         #[CurrentUser] User $user,
-    ) : JsonResponse {$
+    ) : JsonResponse {
 
         $room = $this->rum->createRoom($user, $sauce);
         return $this->json([

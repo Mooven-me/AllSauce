@@ -6,6 +6,7 @@ use App\Repository\SauceRoomRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: SauceRoomRepository::class)]
@@ -15,28 +16,33 @@ class SauceRoom
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Ignore]
     private ?int $id = null;
 
     #[ORM\Column(length: 5)]
+    #[Groups(['room'])]
     private ?string $roomCode = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $leader = null;
-
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'sauceRoom')]
-    private Collection $users;
 
     #[ORM\ManyToOne(inversedBy: 'sauceRooms')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['room'])]
     private ?Sauce $sauce = null;
 
     #[ORM\ManyToOne]
     #[Ignore]
     private ?Question $currentQuestion = null;
+
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'sauceRooms')]
+    #[Groups(['room'])]
+    private Collection $users;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['room'])]
+    private ?User $leader = null;
 
     public function __construct()
     {
@@ -45,48 +51,6 @@ class SauceRoom
 
     public function getId() : ?int {
         return $this->id;
-    }
-
-    public function getLeader(): ?User
-    {
-        return $this->leader;
-    }
-
-    public function setLeader(User $leader): static
-    {
-        $this->leader = $leader;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): static
-    {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setSauceRoom($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getSauceRoom() === $this) {
-                $user->setSauceRoom(null);
-            }
-        }
-
-        return $this;
     }
 
     public function getRoomCode(): ?string
@@ -121,6 +85,45 @@ class SauceRoom
     public function setCurrentQuestion(?Question $currentQuestion): static
     {
         $this->currentQuestion = $currentQuestion;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addSauceRoom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeSauceRoom($this);
+        }
+
+        return $this;
+    }
+
+    public function getLeader(): ?User
+    {
+        return $this->leader;
+    }
+
+    public function setLeader(?User $leader): static
+    {
+        $this->leader = $leader;
 
         return $this;
     }

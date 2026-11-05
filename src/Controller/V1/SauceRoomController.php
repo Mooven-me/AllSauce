@@ -22,21 +22,21 @@ final class SauceRoomController extends AbstractController
 
     #[Route('/', name: 'api_sauce_get_sauce_room', methods: ['GET'])]
     public function getSauce(
-        #[MapEntity(mapping: ['slug' => 'sauce.slug', 'roomCode' => 'roomCode'])]
+        #[MapEntity(expr: 'repository.findOneBySlugAndCode(slug, roomCode)')]
         SauceRoom $sauceRoom,
     ) : JsonResponse{
-        return $this->json($sauceRoom);
+        return $this->json($sauceRoom, context : ['groups' => ['room']]);
     }
 
     #[Route('/start', name: 'api_sauce_room_start', methods: ['POST'])]
     public function startSauce(
-        #[MapEntity(mapping: ['slug' => 'sauce.slug', 'roomCode' => 'roomCode'])]
+        #[MapEntity(expr: 'repository.findOneBySlugAndCode(slug, roomCode)')]
         SauceRoom $sauceRoom,
         #[CurrentUser]
         User $user,
     ) : JsonResponse {
 
-        if($sauceRoom->getLeader() === $user) {
+        if($sauceRoom->getLeader() !== $user) {
             throw $this->createNotFoundException();
         }
 

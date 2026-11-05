@@ -3,9 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Uid\Uuid;
 
@@ -18,18 +21,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user', 'room'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'uuid')]
+    #[Ignore]
+    #[Groups(['user'])]
     private Uuid $uuid;
 
     #[ORM\Column(length: 180, nullable: true)]
+    #[Groups(['user'])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
+    #[Ignore]
     private array $roles = [];
 
     #[Ignore]
@@ -37,23 +45,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(options: ['default' => true])]
+    #[Groups(['user'])]
     private bool $anonymous = true;
 
     #[ORM\Column]
+    #[Groups(['user'])]
     private \DateTimeImmutable $createdAt;
 
-    #[Ignore]
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    #[ORM\JoinColumn(nullable: true, onDelete:'SET NULL')]
-    private ?SauceRoom $sauceRoom = null;
-
     #[ORM\Column(nullable: true)]
+    #[Groups(['user', 'room'])]
     private ?int $score = null;
+
+    /**
+     * @var Collection<int, SauceRoom>
+     */
+    #[Ignore]
+    #[ORM\ManyToMany(targetEntity: SauceRoom::class, inversedBy: 'users')]
+    private Collection $sauceRooms;
 
     public function __construct()
     {
         $this->uuid = Uuid::v7();
         $this->createdAt = new \DateTimeImmutable();
+        $this->sauceRooms = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,17 +158,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->createdAt;
     }
 
-    public function getSauceRoom(): ?SauceRoom
-    {
-        return $this->sauceRoom;
-    }
+    // public function getSauceRoom(): ?SauceRoom
+    // {
+    //     return $this->sauceRoom;
+    // }
 
-    public function setSauceRoom(?SauceRoom $sauceRoom): static
-    {
-        $this->sauceRoom = $sauceRoom;
+    // public function setSauceRoom(?SauceRoom $sauceRoom): static
+    // {
+    //     $this->sauceRoom = $sauceRoom;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getScore(): ?int
     {
@@ -164,6 +178,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setScore(?int $score): static
     {
         $this->score = $score;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SauceRoom>
+     */
+    public function getSauceRooms(): Collection
+    {
+        return $this->sauceRooms;
+    }
+
+    public function addSauceRoom(SauceRoom $sauceRoom): static
+    {
+        if (!$this->sauceRooms->contains($sauceRoom)) {
+            $this->sauceRooms->add($sauceRoom);
+        }
+
+        return $this;
+    }
+
+    public function removeSauceRoom(SauceRoom $sauceRoom): static
+    {
+        $this->sauceRooms->removeElement($sauceRoom);
 
         return $this;
     }

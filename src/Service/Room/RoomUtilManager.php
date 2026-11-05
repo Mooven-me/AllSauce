@@ -26,8 +26,6 @@ class RoomUtilManager {
      */
     public function createRoom(User $user, Sauce $sauce) : SauceRoom
     {
-        $this->removeUserFromRoom($user);
-
         $room = new SauceRoom();
         $this->em->persist($room);
         
@@ -35,7 +33,7 @@ class RoomUtilManager {
         $room->addUser($user);
         $room->setSauce($sauce);
         $room->setRoomCode($this->generateUniqueRoomCode($sauce));
-        $user->setSauceRoom($room);
+        $user->addSauceRoom($room);
 
         $this->em->flush();
 
@@ -60,7 +58,8 @@ class RoomUtilManager {
      */
     public function removeUserFromRoom(User $user) : void
     {
-        $room = $user->getSauceRoom();
+        // TODO FIX THIS FUNCTION
+        $room = $user->getSauceRooms()[0];
 
         if(!empty($room)){
             $room->removeUser($user);
