@@ -9,12 +9,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: SauceRoomRepository::class)]
+#[ORM\UniqueConstraint(name: 'uniq_sauce_room_code', columns: ['sauce_id', 'room_code'])]
 class SauceRoom
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 5)]
+    private ?string $roomCode = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -25,9 +29,6 @@ class SauceRoom
      */
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'sauceRoom')]
     private Collection $users;
-
-    #[ORM\Column(length: 5, unique: true)]
-    private ?string $roomCode = null;
 
     #[ORM\ManyToOne(inversedBy: 'sauceRooms')]
     #[ORM\JoinColumn(nullable: false)]

@@ -34,7 +34,7 @@ class RoomUtilManager {
         $room->setLeader($user);
         $room->addUser($user);
         $room->setSauce($sauce);
-        $room->setRoomCode($this->generateUniqueRoomCode());
+        $room->setRoomCode($this->generateUniqueRoomCode($sauce));
         $user->setSauceRoom($room);
 
         $this->em->flush();
@@ -42,14 +42,14 @@ class RoomUtilManager {
         return $room;
     }
 
-    private function generateUniqueRoomCode(): string
+    private function generateUniqueRoomCode(Sauce $sauce): string
     {
         $alphabet = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
     
         do {
             // Generates random 5-char code, e.g. "K7PX9"
             $code = ByteString::fromRandom(5, $alphabet)->toString();
-        } while ($this->sauceRoomRepo->findOneByRoomCode($code) !== null);
+        } while ($this->sauceRoomRepo->findOneBy(['sauce' => $sauce, 'roomCode' => $code]) !== null);
     
         return $code;
     }
