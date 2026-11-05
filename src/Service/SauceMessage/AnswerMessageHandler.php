@@ -19,4 +19,4 @@ class AnswerMessageHandler extends AbstractSauceMessageHandler {
         ]);
         $this->create($room, MercureTypeEnum::QUESTION, new DelayStamp(4000));
     }
-}
+} 
