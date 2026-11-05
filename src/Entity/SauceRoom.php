@@ -6,6 +6,7 @@ use App\Repository\SauceRoomRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: SauceRoomRepository::class)]
 class SauceRoom
@@ -31,6 +32,10 @@ class SauceRoom
     #[ORM\ManyToOne(inversedBy: 'sauceRooms')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Sauce $sauce = null;
+
+    #[ORM\ManyToOne]
+    #[Ignore]
+    private ?Question $currentQuestion = null;
 
     public function __construct()
     {
@@ -103,6 +108,18 @@ class SauceRoom
     public function setSauce(?Sauce $sauce): static
     {
         $this->sauce = $sauce;
+
+        return $this;
+    }
+
+    public function getCurrentQuestion(): ?Question
+    {
+        return $this->currentQuestion;
+    }
+
+    public function setCurrentQuestion(?Question $currentQuestion): static
+    {
+        $this->currentQuestion = $currentQuestion;
 
         return $this;
     }

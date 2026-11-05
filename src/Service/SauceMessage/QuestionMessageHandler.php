@@ -18,10 +18,11 @@ class QuestionMessageHandler extends AbstractSauceMessageHandler {
 
     public function run(SauceRoom $room) : void {
         $question = $this->em->getRepository(Question::class)->findOneRandomly();
-        $data = [
+        $room->setCurrentQuestion($question);
+        
+        $this->send($room, 'question', [
             $this->serializer->serialize($question, 'json')
-        ];
-        $this->send($room, 'question', $data);
+        ]);
         $this->create($room, MercureTypeEnum::ANSWER, new DelayStamp(15000));
     }
 }
