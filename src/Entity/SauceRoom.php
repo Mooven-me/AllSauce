@@ -29,6 +29,7 @@ class SauceRoom
     private ?Sauce $sauce = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Ignore]
     private ?Question $currentQuestion = null;
 

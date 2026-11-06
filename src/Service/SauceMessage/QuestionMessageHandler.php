@@ -19,7 +19,8 @@ class QuestionMessageHandler extends AbstractSauceMessageHandler {
     public function run(SauceRoom $room) : void {
         $question = $this->em->getRepository(Question::class)->findOneRandomly();
         $room->setCurrentQuestion($question);
-        
+        $this->em->flush();
+
         $this->send($room, 'question', [
             $this->serializer->serialize($question, 'json')
         ]);

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\LanguageEnum;
 use App\Repository\QuestionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Ignore;
@@ -73,6 +74,20 @@ abstract class Question
         $this->answers = $answers;
 
         return $this;
+    }
+
+    public function setAnswer(LanguageEnum $language, string $answer): static
+    {
+        $this->answers[$language->value] = $answer;
+    
+        return $this;
+    }
+
+    public function getAnswer(LanguageEnum $language, LanguageEnum $fallback = LanguageEnum::EN): ?string
+    {
+        return $this->answers[$language->value]
+            ?? $this->answers[$fallback->value] 
+            ?? null;
     }
 
     public function getManagerClass(): ?string

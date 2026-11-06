@@ -2,12 +2,19 @@
 
 namespace App\Sauce\Question\lolsauce;
 
+use App\Enum\LanguageEnum;
 use App\Sauce\Question\AbstractDownloaderManager;
 use App\Service\Question\JsonFileReader;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class LoLSauceUtilManager {
+
+    public static array $mapLanguageEnumToLoL = [
+        LanguageEnum::FR->value => 'fr_FR',
+        LanguageEnum::EN->value => 'en_GB'
+    ];
+
     public function __construct(
         private CacheInterface $cache,
         private LoLSauceUpdater $lolSauceUpdater,
@@ -30,7 +37,6 @@ class LoLSauceUtilManager {
             return $champions;
         }
 
-        $version = $this->getVersion();
         return $champions[$language] = $this->json->read('/data/'.$language.'/champion.json')['data'];
     }
 
@@ -38,15 +44,10 @@ class LoLSauceUtilManager {
         return $this->json->read('/data/'.$language.'/champion/'.$championId.'.json')['data'][$championId];
     }
 
-    public function getLanguages() : array {
-        return $this->json->read('../languages.json');
-    }
-
-    public function getChampionNames(string $championId) : array {
-        $names = [];
-        foreach($this->getLanguages() as $language){
-            $names[] = $this->getChampionById($championId, $language)['name'];
-        }
-        return $names;
+    public function getChampionNameByLanguage(string $championId, LanguageEnum $language) : string {
+        return $this->getChampionById(
+            $championId, 
+            self::$mapLanguageEnumToLoL[$language->value]
+        )['name'];
     }
 }

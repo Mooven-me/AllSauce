@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Question;
+use App\Entity\SauceRoom;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,14 +17,23 @@ class QuestionRepository extends ServiceEntityRepository
         parent::__construct($registry, Question::class);
     }
 
-    public function deleteByManagerClass(string $class){
-        $query = $this->createQueryBuilder('q')
-                ->andWhere('q.managerClass = :managerClass')
-                ->setParameter('type', $class)
-                ->delete()
-                ->getQuery()
-                ->execute();
-        return $query;
+    public function deleteByManagerClass(string $class)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->update(SauceRoom::class, 'sr')
+            ->set('sr.currentQuestion', ':null')
+            ->where('sr.currentQuestion IN (SELECT q.id FROM ' . Question::class . ' q WHERE q.managerClass = :managerClass)')
+            ->setParameter('null', null)
+            ->setParameter('managerClass', $class)
+            ->getQuery()
+            ->execute();
+
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.managerClass = :managerClass')
+            ->setParameter('managerClass', $class)
+            ->delete()
+            ->getQuery()
+            ->execute();
     }
 
     public function findOneRandomly() : Question {
