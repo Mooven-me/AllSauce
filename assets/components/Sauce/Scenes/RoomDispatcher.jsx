@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Room from "./Room";
 import { useSauceRoom } from "../../Provider/SauceRoomProvider";
 import GameQueued from "./GameQueued";
-import QuestionDispatcher from "./Question/QuestionDIspatcher";
+import QuestionDispatcher from "./Question/QuestionDispatcher";
 import Answer from "./Answer";
 import { Spinner } from "reactstrap";
 
@@ -12,12 +12,19 @@ import { Spinner } from "reactstrap";
 function MercureRoomDispatcher(){
 
     const [scene, setScene] = useState('room');
+    const { setQuestion, setAnswer } = useSauceRoom();
 
     useMercureEvents({
         'room': (data) => setScene('start'),
         'start': (data) => setScene('start'),
-        'question': (data) => setScene("question"),
-        'answer': (data) => setScene("answer"),
+        'question': (data) => {
+            setQuestion(data);
+            setScene("question");
+        },
+        'answer': (data) => {
+            setScene("answer");
+            setAnswer(data);
+        },
     });
 
     const handleDispatch = useMemo(() => {
@@ -47,12 +54,14 @@ export default function RoomDispatcher() {
 
     return (
         <MercureProvider topics={[`https://subscribed.channel/room/${params.slug}/${params.roomCode}`]}>
-            {
-                isLoading ? 
-                    <Spinner />
-                :
-                    <MercureRoomDispatcher />
-            }
+            <div className="h-100 h-100 d-flex justify-content-center align-items-center">
+                {
+                    isLoading ? 
+                        <Spinner />
+                    :
+                        <MercureRoomDispatcher />
+                }
+            </div>
         </MercureProvider>
     )
 }

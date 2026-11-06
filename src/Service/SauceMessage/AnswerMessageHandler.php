@@ -15,9 +15,7 @@ class AnswerMessageHandler extends AbstractSauceMessageHandler {
     ){}
 
     public function run(SauceRoom $room) : void {
-        $this->send($room, 'answer', [
-            $this->serializer->serialize($room->getCurrentQuestion()->getAnswer(LanguageEnum::FR), 'json')
-        ]);
+        $this->send($room, 'answer', [$room->getCurrentQuestion()->getAnswer(LanguageEnum::FR)]);
         $this->create($room, MercureTypeEnum::QUESTION, new DelayStamp(4000));
     }
 } 

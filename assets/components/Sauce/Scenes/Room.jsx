@@ -15,18 +15,18 @@ export default function Room(){
     }
 
     return (
-        <div className="d-flex h-100 justify-content-center align-items-center">
-                {
-                    sauceRoom.leader.id === user.id ? (
-                        <>
-                            <LoadingButton onClick={handleStartGame} className={"opaque-dark-blue"}>
-                                lancer la partie
-                            </LoadingButton>
-                        </>
-                    ) : (
-                        <i>Le chef configure la game ...</i>
-                    )
-                }
-        </div>
+        <>
+            {
+                sauceRoom.leader.id === user.id ? (
+                    <>
+                        <LoadingButton onClick={handleStartGame} className={"opaque-dark-blue"}>
+                            lancer la partie
+                        </LoadingButton>
+                    </>
+                ) : (
+                    <i>Le chef configure la game ...</i>
+                )
+            }
+        </>
     )
 }

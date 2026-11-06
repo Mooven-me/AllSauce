@@ -10,6 +10,8 @@ export function SauceRoomProvider({children}) {
     const [isLoading, setLoading] = useState(true);
     const [roomCreationLoading, setRoomCreationLoading] = useState(false);
     const navigate = useNavigate()
+    const [question, setQuestion] = useState(null);
+    const [answer, setAnswer] = useState(null);
 
     const setSauceRoom = async (slug, roomCode) => {
         setLoading(true);
@@ -33,9 +35,27 @@ export function SauceRoomProvider({children}) {
 
     const startRoom = async (slug) => await sendData({ route: '/sauce/' + slug + '/room/' + sauceRoom.roomCode + '/start', method: "POST" });
 
+    const sendAnswer = async (value) => {
+        if(inputValue.trim()){
+            let data = {'word': value}
+            await sendData({route:'/send_answer', data:data})
+        }
+    }
 
-    const value = useMemo(() => ({ sauceRoom, setSauceRoom, isLoading, createRoom, roomCreationLoading, startRoom }),
-    [sauceRoom, setSauceRoom, isLoading, createRoom, roomCreationLoading, startRoom]);
+
+    const value = useMemo(() => ({ 
+        sauceRoom, setSauceRoom, isLoading, 
+        createRoom, roomCreationLoading, 
+        startRoom, 
+        sendAnswer, answer, setAnswer,
+        setQuestion, question }),
+    [
+        sauceRoom, setSauceRoom, isLoading, 
+        createRoom, roomCreationLoading, 
+        startRoom, 
+        sendAnswer, answer, setAnswer,
+        setQuestion, question
+    ]);
     
     return (
         <SauceContext.Provider value={value}>

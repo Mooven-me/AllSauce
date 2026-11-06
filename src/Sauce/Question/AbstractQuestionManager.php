@@ -37,7 +37,7 @@ abstract class AbstractQuestionManager {
      * so you can know from wich service it has been craeted
      * and also select question about its type
      */
-    public function getManagerClass() : string { return self::class; }
+    public function getManagerClass() : string { return static::class; }
 
     protected function getSauce() : Sauce {
         static $sauce = null;

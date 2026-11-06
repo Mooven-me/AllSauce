@@ -2,16 +2,21 @@
 
 namespace App\Entity;
 
+use App\Entity\Question\TextQuestion;
 use App\Enum\LanguageEnum;
 use App\Repository\QuestionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\DiscriminatorMap;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 #[ORM\InheritanceType('SINGLE_TABLE')]
-#[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
+#[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
 #[ORM\DiscriminatorMap([
-
+    'textQuestion' => TextQuestion::class,
+])]
+#[DiscriminatorMap(typeProperty: 'type', mapping: [
+    'textQuestion' => TextQuestion::class,
 ])]
 abstract class Question
 {

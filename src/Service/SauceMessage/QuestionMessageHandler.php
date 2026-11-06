@@ -21,9 +21,7 @@ class QuestionMessageHandler extends AbstractSauceMessageHandler {
         $room->setCurrentQuestion($question);
         $this->em->flush();
 
-        $this->send($room, 'question', [
-            $this->serializer->serialize($question, 'json')
-        ]);
+        $this->send($room, 'question', $question);
         $this->create($room, MercureTypeEnum::ANSWER, new DelayStamp(10000));
     }
 }
