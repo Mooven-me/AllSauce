@@ -3356,8 +3356,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-09T13:58:01+00:00",
-            "published-time": "2026-10-14T06:48:30+00:00"
+            "time": "2026-10-09T13:58:01+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -4183,16 +4182,16 @@
         },
         {
             "name": "symfony/lock",
-            "version": "v8.1.10",
+            "version": "v8.1.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/lock.git",
-                "reference": "86767bf6c112741d39118cc4c946f1a7ee98fa6d"
+                "reference": "c121c8011a1b85698594cca96da5546cc6c78949"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/lock/zipball/86767bf6c112741d39118cc4c946f1a7ee98fa6d",
-                "reference": "86767bf6c112741d39118cc4c946f1a7ee98fa6d",
+                "url": "https://api.github.com/repos/symfony/lock/zipball/c121c8011a1b85698594cca96da5546cc6c78949",
+                "reference": "c121c8011a1b85698594cca96da5546cc6c78949",
                 "shasum": ""
             },
             "require": {
@@ -4241,7 +4240,7 @@
                 "semaphore"
             ],
             "support": {
-                "source": "https://github.com/symfony/lock/tree/v8.1.10"
+                "source": "https://github.com/symfony/lock/tree/v8.1.11"
             },
             "funding": [
                 {
@@ -4261,7 +4260,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-25T14:40:25+00:00"
+            "time": "2026-11-01T22:27:46+00:00"
         },
         {
             "name": "symfony/mercure",
@@ -9783,5 +9782,5 @@
         "ext-iconv": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.11.0"
+    "plugin-api-version": "2.9.0"
 }
